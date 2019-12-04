@@ -2,3 +2,4 @@ export const USER_CREATE = "USER_CREATE";
 export const USER_CREATE_FAILED = "USER_CREATE_FAILED";
 export const USER_LOGIN = "USER_LOGIN";
 export const USER_LOGIN_FAILED = "USER_LOGIN_FAILED";
+export const STUDENT_LIST = "STUDENT_LIST";

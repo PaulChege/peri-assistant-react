@@ -1,7 +1,7 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userLogin } from "../actions";
+import { userLogin } from "../actions/users";
 
 class LogIn extends React.Component {
   onSubmit = formValues => {
@@ -46,7 +46,7 @@ class LogIn extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    errors: state.user.errors
+    errors: state.user.loginErrors
   };
 };
 

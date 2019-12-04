@@ -10,11 +10,11 @@ export default (state = {}, action) => {
     case USER_LOGIN:
       return { ...state, currentUser: action.payload };
     case USER_LOGIN_FAILED:
-      return { ...state, errors: action.payload };
+      return { ...state, loginErrors: action.payload };
     case USER_CREATE:
       return { ...state, currentUser: action.payload };
     case USER_CREATE_FAILED:
-      return { ...state, errors: action.payload };
+      return { ...state, createErrors: action.payload };
     default:
       return state;
   }

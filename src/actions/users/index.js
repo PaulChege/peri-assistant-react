@@ -1,11 +1,11 @@
-import periAssistantApi from "../api/periAssistantApi";
-import history from "../history";
+import periAssistantApi from "../../api/periAssistantApi";
+import history from "../../history";
 import {
   USER_CREATE,
   USER_CREATE_FAILED,
   USER_LOGIN,
   USER_LOGIN_FAILED
-} from "./types";
+} from "../types";
 
 export const userCreate = formValues => async dispatch => {
   try {

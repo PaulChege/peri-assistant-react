@@ -1,7 +1,7 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userCreate } from "../../actions";
+import { userCreate } from "../../actions/users";
 
 class UserCreate extends React.Component {
   onSubmit = formValues => {
@@ -50,7 +50,7 @@ class UserCreate extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    errors: state.user.errors
+    errors: state.user.createErrors
   };
 };
 

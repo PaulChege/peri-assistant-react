@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <div className="col-sm-12">
-      <Link to="/">
+      <Link to="/" className="text-decoration-none">
         <img alt="logo" width="45x" height="45px" src="/logo.png" />
       </Link>
       <h3>Peri Assistant</h3>
+
       <div className="float-right">
         <Link className="btn btn-primary" to="/login">
           Log In
