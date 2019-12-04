@@ -7,45 +7,39 @@ class UserCreate extends React.Component {
   onSubmit = formValues => {
     this.props.userCreate(formValues);
   };
+
+  renderForm(input, placeholder, type = "") {
+    return (
+      <div className="form-group">
+        <input
+          {...input}
+          placeholder={placeholder}
+          type={type}
+          className="form-control"
+        />
+      </div>
+    );
+  }
   render() {
     return (
       <div className="col-sm-5">
-        <p className="text-danger">{this.props.errors}</p>
         <br />
         <h3>Sign Up</h3>
+        <p className="text-danger">{this.props.errors}</p>
         <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
           <Field
             name="name"
-            component={({ input }) => (
-              <div className="form-group">
-                <input {...input} placeholder="Name" className="form-control" />
-              </div>
-            )}
+            component={({ input }) => this.renderForm(input, "Name")}
           />
           <Field
             name="email"
-            component={({ input }) => (
-              <div className="form-group">
-                <input
-                  {...input}
-                  placeholder="Email"
-                  className="form-control"
-                />
-              </div>
-            )}
+            component={({ input }) => this.renderForm(input, "Email", "email")}
           />
           <Field
             name="password"
-            component={({ input }) => (
-              <div className="form-group">
-                <input
-                  {...input}
-                  type="password"
-                  placeholder="Password"
-                  className="form-control"
-                />
-              </div>
-            )}
+            component={({ input }) =>
+              this.renderForm(input, "Password", "password")
+            }
           />
           <button className="btn btn-primary">Sign Up</button>
         </form>

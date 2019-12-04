@@ -4,6 +4,7 @@ import Login from "./LogIn";
 import UserCreate from "./users/UserCreate";
 import history from "../history";
 import Header from "./Header";
+import StudentList from "./students/StudentList";
 
 class App extends React.Component {
   render() {
@@ -12,7 +13,7 @@ class App extends React.Component {
         <Router history={history}>
           <Header />
           <Switch>
-            <Route path="/" exact component={Login} />
+            <Route path="/" exact component={StudentList} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={UserCreate} />
           </Switch>

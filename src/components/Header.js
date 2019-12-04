@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <div className="col-sm-12">
-      <img alt="logo" width="45x" height="45px" src="/logo.png" />
+      <Link to="/">
+        <img alt="logo" width="45x" height="45px" src="/logo.png" />
+      </Link>
       <h3>Peri Assistant</h3>
       <div className="float-right">
         <Link className="btn btn-primary" to="/login">
