@@ -9,7 +9,7 @@ class StudentList extends React.Component {
   render() {
     if (this.props.students) {
       return (
-        <div className="col-sm-12">
+        <div className="col-sm-8">
           <h4>Students</h4>
           {this.props.students.map(student => {
             return <div key={student.id}>{student.name}</div>;
