@@ -8,23 +8,21 @@ import {
 import history from "../history";
 import { getToken, removeToken } from "../auth/token";
 
-periAssistantApi.defaults.headers.common["Authorization"] = getToken();
-
 export const getStudentList = () => async dispatch => {
   try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get("/students");
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch (err) {
     if (err.response.status === 401) {
-      removeToken();
-      dispatch({ type: USER_LOGOUT, payload: { isSignedIn: false } });
-      history.push("/login");
+      _logout(dispatch);
     }
   }
 };
 
 export const createStudent = formValues => async dispatch => {
   try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.post("/students", {
       student: formValues
     });
@@ -39,4 +37,10 @@ export const createStudent = formValues => async dispatch => {
       payload: err.response.data.message
     });
   }
+};
+
+const _logout = dispatch => {
+  removeToken();
+  dispatch({ type: USER_LOGOUT, payload: { isSignedIn: false } });
+  history.push("/login");
 };

@@ -10,7 +10,8 @@ class StudentList extends React.Component {
   render() {
     if (this.props.students) {
       return (
-        <div className="col-sm-12">
+        <div className="container">
+          <br />
           <br />
           <h4>Students</h4>
           <br />
