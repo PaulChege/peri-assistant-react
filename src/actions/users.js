@@ -7,7 +7,7 @@ import {
   USER_LOGIN_FAILED,
   USER_LOGOUT
 } from "./types";
-import { setToken, removeToken } from "../auth/token";
+import { setToken, removeToken } from "../auth/auth";
 
 export const userCreate = formValues => async dispatch => {
   try {

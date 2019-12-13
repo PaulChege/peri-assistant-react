@@ -2,11 +2,11 @@ import React from "react";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import { createStudent } from "../../actions/students";
-import { getStudentInstrumentList } from "../../actions/instruments";
+import { getInstrumentList } from "../../actions/instruments";
 
 class StudentCreate extends React.Component {
   componentDidMount() {
-    this.props.getStudentInstrumentList();
+    this.props.getInstrumentList();
   }
   onSubmit = formValues => {
     this.props.createStudent(formValues);
@@ -124,7 +124,7 @@ const mapStateToProps = state => {
 };
 export default connect(mapStateToProps, {
   createStudent,
-  getStudentInstrumentList
+  getInstrumentList
 })(
   reduxForm({
     form: "studentCreateForm"

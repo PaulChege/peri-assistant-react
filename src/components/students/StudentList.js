@@ -33,7 +33,10 @@ class StudentList extends React.Component {
                       <h5 className="card-title">{student.name}</h5>
                       <p className="card-text">{student.institution}</p>
                       <p className="card-text">{student.instrument}</p>
-                      <Link to="#" className="btn btn-primary">
+                      <Link
+                        to={`/student/${student.id}/lessons`}
+                        className="btn btn-primary"
+                      >
                         View Lessons
                       </Link>
                     </div>

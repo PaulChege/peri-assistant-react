@@ -1,12 +1,12 @@
 import periAssistantApi from "../api/periAssistantApi";
 import {
   STUDENT_LIST,
-  USER_LOGOUT,
   STUDENT_CREATE,
-  STUDENT_CREATE_FAILED
+  STUDENT_CREATE_FAILED,
+  STUDENT_SHOW
 } from "./types";
 import history from "../history";
-import { getToken, removeToken } from "../auth/token";
+import { getToken, logout } from "../auth/auth";
 
 export const getStudentList = () => async dispatch => {
   try {
@@ -15,7 +15,7 @@ export const getStudentList = () => async dispatch => {
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch (err) {
     if (err.response.status === 401) {
-      _logout(dispatch);
+      logout(dispatch);
     }
   }
 };
@@ -39,8 +39,14 @@ export const createStudent = formValues => async dispatch => {
   }
 };
 
-const _logout = dispatch => {
-  removeToken();
-  dispatch({ type: USER_LOGOUT, payload: { isSignedIn: false } });
-  history.push("/login");
+export const getStudent = student_id => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    const response = await periAssistantApi.get(`/students/${student_id}`);
+    dispatch({ type: STUDENT_SHOW, payload: response.data });
+  } catch (err) {
+    if (err.response.status === 401) {
+      logout(dispatch);
+    }
+  }
 };

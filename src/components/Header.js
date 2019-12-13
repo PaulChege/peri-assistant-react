@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { userLogout } from "../actions/users";
-import { getToken } from "../auth/token";
+import { getToken } from "../auth/auth";
 
 class Header extends React.Component {
   onLogOut = () => {
