@@ -5,9 +5,11 @@ import studentReducer from "./studentReducer";
 import { USER_LOGOUT } from "../actions/types";
 import instrumentReducer from "./instrumentReducer";
 import lessonReducer from "./lessonReducer";
+import errorReducer from "./errorReducer";
 
 const appReducer = combineReducers({
   form: formReducer,
+  errors: errorReducer,
   user: userReducer,
   students: studentReducer,
   instruments: instrumentReducer,

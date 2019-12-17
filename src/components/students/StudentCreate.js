@@ -56,17 +56,20 @@ class StudentCreate extends React.Component {
               <label>Instrument:</label>
               <Field
                 name="instrument"
-                component={({ input }) => (
-                  <div className="form-group">
-                    <select {...input} className="form-control">
-                      {this.props.instrumentList.map((instrument, index) => (
-                        <option key={index} value={instrument}>
-                          {instrument}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+                component={({ input }) => {
+                  input.value = this.props.instrumentList[0];
+                  return (
+                    <div className="form-group">
+                      <select {...input} className="form-control">
+                        {this.props.instrumentList.map((instrument, index) => (
+                          <option key={index} value={instrument}>
+                            {instrument}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                }}
               />
               <label>Start Date: </label>
               <Field
@@ -78,19 +81,22 @@ class StudentCreate extends React.Component {
               <label>Usual Lesson Day: </label>
               <Field
                 name="lesson_day"
-                component={({ input }) => (
-                  <div className="form-group">
-                    <select className="form-control" {...input}>
-                      <option value="0">Monday</option>
-                      <option value="1">Tuesday</option>
-                      <option value="2">Wednesday</option>
-                      <option value="3">Thurday</option>
-                      <option value="4">Friday</option>
-                      <option value="5">Saturday</option>
-                      <option value="6">Sunday</option>
-                    </select>
-                  </div>
-                )}
+                component={({ input }) => {
+                  input.value = "0";
+                  return (
+                    <div className="form-group">
+                      <select className="form-control" {...input}>
+                        <option value="0">Monday</option>
+                        <option value="1">Tuesday</option>
+                        <option value="2">Wednesday</option>
+                        <option value="3">Thurday</option>
+                        <option value="4">Friday</option>
+                        <option value="5">Saturday</option>
+                        <option value="6">Sunday</option>
+                      </select>
+                    </div>
+                  );
+                }}
               />
               <label>Usual Lesson Time: </label>
               <Field
@@ -118,7 +124,7 @@ class StudentCreate extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    errors: state.students.createErrors,
+    errors: state.errors.studentCreateError,
     instrumentList: state.instruments.instrumentList
   };
 };

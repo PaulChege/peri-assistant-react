@@ -50,7 +50,7 @@ class UserCreate extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    errors: state.user.createErrors
+    errors: state.errors.userCreateError
   };
 };
 
