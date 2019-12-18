@@ -14,9 +14,7 @@ export const getStudentList = () => async dispatch => {
     const response = await periAssistantApi.get("/students");
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch (err) {
-    if (err.response.status === 401) {
-      logout(dispatch);
-    }
+    logout(dispatch);
   }
 };
 
