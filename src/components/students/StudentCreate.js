@@ -57,10 +57,10 @@ class StudentCreate extends React.Component {
               <Field
                 name="instrument"
                 component={({ input }) => {
-                  input.value = this.props.instrumentList[0];
                   return (
                     <div className="form-group">
                       <select {...input} className="form-control">
+                        <option></option>
                         {this.props.instrumentList.map((instrument, index) => (
                           <option key={index} value={instrument}>
                             {instrument}
@@ -82,10 +82,10 @@ class StudentCreate extends React.Component {
               <Field
                 name="lesson_day"
                 component={({ input }) => {
-                  input.value = "0";
                   return (
                     <div className="form-group">
                       <select className="form-control" {...input}>
+                        <option></option>
                         <option value="0">Monday</option>
                         <option value="1">Tuesday</option>
                         <option value="2">Wednesday</option>

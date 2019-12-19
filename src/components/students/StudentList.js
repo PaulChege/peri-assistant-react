@@ -11,13 +11,12 @@ class StudentList extends React.Component {
     if (this.props.students) {
       return (
         <div className="container">
-          <br />
-          <br />
           <h4>Students</h4>
           <br />
-          <Link to="/student/create" className="btn btn-primary float-right">
+          <Link to="/student/create" className="btn btn-primary">
             Add Student
           </Link>
+          <br />
           <br />
           <div className="row">
             {this.props.students.map(student => {

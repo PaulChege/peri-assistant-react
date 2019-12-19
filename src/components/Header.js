@@ -36,12 +36,29 @@ class Header extends React.Component {
 
   render() {
     return (
-      <div className="col-sm-12">
-        <Link to="/" className="text-decoration-none">
-          <img alt="logo" width="45x" height="45px" src="/logo.png" />
-        </Link>
-        <h3>Peri Assistant</h3>
-        <div className="float-right">{this.renderLogin()}</div>
+      <div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <Link to="/" className="navbar-brand">
+            <img alt="logo" width="45x" height="45px" src="/logo.png" />
+          </Link>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <h3>Peri Assistant</h3>
+          <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <ul className="navbar-nav mr-auto"></ul>
+            <span className="navbar-text">{this.renderLogin()}</span>
+          </div>
+        </nav>
+        <br />
       </div>
     );
   }

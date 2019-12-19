@@ -6,6 +6,7 @@ import history from "../history";
 import Header from "./Header";
 import StudentList from "./students/StudentList";
 import StudentCreate from "./students/StudentCreate";
+import StudentEdit from "./students/StudentEdit";
 import LessonList from "./lessons/LessonList";
 
 class App extends React.Component {
@@ -19,6 +20,7 @@ class App extends React.Component {
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={UserCreate} />
             <Route path="/student/create" exact component={StudentCreate} />
+            <Route path="/student/:id/edit" exact component={StudentEdit} />
             <Route path="/student/:id/lessons" exact component={LessonList} />
           </Switch>
         </Router>
