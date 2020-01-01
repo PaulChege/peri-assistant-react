@@ -42,8 +42,8 @@ export const getStudent = student_id => async dispatch => {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(`/students/${student_id}`);
     dispatch({ type: STUDENT_SHOW, payload: response.data });
-  } catch (err) {
-    if (err.response.status === 401) {
+  } catch (error) {
+    if (error.response.status === 401) {
       logout(dispatch);
     }
   }

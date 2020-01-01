@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { userLogout } from "../actions/users";
+import { logout } from "../auth/auth";
 import { getToken } from "../auth/auth";
 
 class Header extends React.Component {
@@ -69,4 +69,4 @@ const mapStateToProps = state => {
     isSignedIn: state.user.isSignedIn
   };
 };
-export default connect(mapStateToProps, { userLogout })(Header);
+export default connect(mapStateToProps, { logout })(Header);

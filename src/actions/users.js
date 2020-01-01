@@ -4,10 +4,9 @@ import {
   USER_CREATE,
   USER_CREATE_FAILED,
   USER_LOGIN,
-  USER_LOGIN_FAILED,
-  USER_LOGOUT
+  USER_LOGIN_FAILED
 } from "./types";
-import { setToken, removeToken } from "../auth/auth";
+import { setToken } from "../auth/auth";
 
 export const userCreate = formValues => async dispatch => {
   try {
@@ -36,17 +35,10 @@ export const userLogin = formValues => async dispatch => {
     });
     history.push("/");
   } catch (error) {
+    // TODO - Handle Network Errors
     dispatch({
       type: USER_LOGIN_FAILED,
       payload: error.response.data.message
     });
   }
-};
-
-export const userLogout = () => {
-  removeToken();
-  history.push("/login");
-  return dispatch => {
-    dispatch({ type: USER_LOGOUT });
-  };
 };
