@@ -1,4 +1,9 @@
-import { STUDENT_LIST, STUDENT_CREATE, STUDENT_SHOW } from "../actions/types";
+import {
+  STUDENT_LIST,
+  STUDENT_CREATE,
+  STUDENT_UPDATE,
+  STUDENT_SHOW
+} from "../actions/types";
 import _ from "lodash";
 
 export default (state = {}, action) => {
@@ -8,6 +13,8 @@ export default (state = {}, action) => {
     case STUDENT_CREATE:
       return { ...state, [action.payload.id]: action.payload };
     case STUDENT_SHOW:
+      return { ...state, [action.payload.id]: action.payload };
+    case STUDENT_UPDATE:
       return { ...state, [action.payload.id]: action.payload };
     default:
       return state;

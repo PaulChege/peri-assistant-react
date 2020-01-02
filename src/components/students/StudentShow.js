@@ -1,11 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  calculate_age,
-  getReadableDate,
-  getDayofWeek,
-  getTime
-} from "../../helper";
+import { calculate_age, getReadableDate, getDayofWeek } from "../../helper";
 
 const StudentShow = ({ student }) => {
   if (student) {
@@ -55,8 +50,7 @@ const StudentShow = ({ student }) => {
               </li>
               <li>
                 <b>Usual Lesson Time: </b>
-                {getDayofWeek(student.lesson_day)}s at{" "}
-                {getTime(student.lesson_time)}
+                {getDayofWeek(student.lesson_day)}s at {student.lesson_time}
               </li>
             </ul>
           </div>
