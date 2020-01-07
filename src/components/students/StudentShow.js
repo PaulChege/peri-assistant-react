@@ -43,7 +43,6 @@ const StudentShow = ({ student }) => {
               </li>
             </ul>
             <ul style={{ listStyleType: "none" }} className="col-sm-4">
-              {/* TODO - Change to show the readable times */}
               <li>
                 <b>Started on: </b>
                 {getReadableDate(student.start_date)}

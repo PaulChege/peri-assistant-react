@@ -43,5 +43,6 @@ export const getDayofWeek = day => {
 };
 
 export const getTime = datetime => {
-  return new Date(datetime).toLocaleTimeString();
+  const time = new Date(datetime);
+  return `${time.getUTCHours()}:${time.getUTCMinutes()}:00`;
 };
