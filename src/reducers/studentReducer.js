@@ -2,7 +2,8 @@ import {
   STUDENT_LIST,
   STUDENT_CREATE,
   STUDENT_UPDATE,
-  STUDENT_SHOW
+  STUDENT_SHOW,
+  STUDENT_DELETE
 } from "../actions/types";
 import _ from "lodash";
 
@@ -16,6 +17,8 @@ export default (state = {}, action) => {
       return { ...state, [action.payload.id]: action.payload };
     case STUDENT_UPDATE:
       return { ...state, [action.payload.id]: action.payload };
+    case STUDENT_DELETE:
+      return _.omit(state, action.payload);
     default:
       return state;
   }

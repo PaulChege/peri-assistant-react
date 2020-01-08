@@ -1,6 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { calculate_age, getReadableDate, getDayofWeek } from "../../helper";
+import DeleteModal from "./DeleteModal";
+
+const onClose = e => {
+  this.props.onClose && this.props.onClose(e);
+};
 
 const StudentShow = ({ student }) => {
   if (student) {
@@ -60,11 +65,17 @@ const StudentShow = ({ student }) => {
             >
               Edit
             </Link>
-            <Link to="/" className="btn btn-danger">
+            <button
+              type="button"
+              className="btn btn-danger"
+              data-toggle="modal"
+              data-target="#primaryModal"
+            >
               Delete
-            </Link>
+            </button>
           </div>
         </div>
+        <DeleteModal onClose={onClose} student={student} />
       </div>
     );
   }

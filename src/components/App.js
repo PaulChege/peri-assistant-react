@@ -21,6 +21,7 @@ class App extends React.Component {
             <Route path="/signup" exact component={UserCreate} />
             <Route path="/student/create" exact component={StudentCreate} />
             <Route path="/student/:id/edit" exact component={StudentEdit} />
+            {/* <Route path="/student/:id/delete" exact component={StudentDelete} /> */}
             <Route path="/student/:id/lessons" exact component={LessonList} />
           </Switch>
         </Router>

@@ -5,7 +5,8 @@ import {
   STUDENT_CREATE_FAILED,
   STUDENT_UPDATE,
   STUDENT_UPDATE_FAILED,
-  STUDENT_SHOW
+  STUDENT_SHOW,
+  STUDENT_DELETE
 } from "./types";
 import history from "../history";
 import { getToken, logout } from "../auth/auth";
@@ -16,7 +17,7 @@ export const getStudentList = () => async dispatch => {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get("/students");
     dispatch({ type: STUDENT_LIST, payload: response.data });
-  } catch (err) {
+  } catch {
     logout(dispatch);
   }
 };
@@ -32,10 +33,10 @@ export const createStudent = formValues => async dispatch => {
       payload: response.data
     });
     history.push("/");
-  } catch (err) {
+  } catch (error) {
     dispatch({
       type: STUDENT_CREATE_FAILED,
-      payload: err.response.data.message
+      payload: error.response.data.message
     });
   }
 };
@@ -61,10 +62,23 @@ export const updateStudent = (student_id, formValues) => async dispatch => {
     });
     dispatch({ type: STUDENT_UPDATE, payload: response.data });
     history.push(`/student/${student_id}/lessons`);
-  } catch (err) {
+  } catch (error) {
     dispatch({
       type: STUDENT_UPDATE_FAILED,
-      payload: err.response.data.message
+      payload: error.response.data.message
     });
+  }
+};
+
+export const deleteStudent = student_id => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    await periAssistantApi.delete(`/students/${student_id}`);
+    dispatch({ type: STUDENT_DELETE, payload: student_id });
+    history.push("/");
+  } catch (error) {
+    if (error.response.status === 401) {
+      logout(dispatch);
+    }
   }
 };
