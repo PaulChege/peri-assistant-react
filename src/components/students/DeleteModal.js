@@ -21,9 +21,8 @@ class DeleteModal extends React.Component {
           Delete
         </button>
         <button
-          // onClick={() =>
-          //   history.push(`/student/${this.props.student.id}/lessons`)
-          // }
+          // TODO - Find better way tomclose modal other than reloading
+          onClick={() => window.location.reload()}
           className="btn btn-primary"
         >
           Cancel

@@ -8,6 +8,7 @@ import StudentList from "./students/StudentList";
 import StudentCreate from "./students/StudentCreate";
 import StudentEdit from "./students/StudentEdit";
 import LessonList from "./lessons/LessonList";
+import LessonCreate from "./lessons/LessonCreate";
 
 class App extends React.Component {
   render() {
@@ -21,8 +22,12 @@ class App extends React.Component {
             <Route path="/signup" exact component={UserCreate} />
             <Route path="/student/create" exact component={StudentCreate} />
             <Route path="/student/:id/edit" exact component={StudentEdit} />
-            {/* <Route path="/student/:id/delete" exact component={StudentDelete} /> */}
             <Route path="/student/:id/lessons" exact component={LessonList} />
+            <Route
+              path="/student/:id/lessons/create"
+              exact
+              component={LessonCreate}
+            />
           </Switch>
         </Router>
       </div>

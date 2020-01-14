@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { getLessonList } from "../../actions/lessons";
 import { getStudent } from "../../actions/students";
-
+import { Link } from "react-router-dom";
 import StudentShow from "../students/StudentShow";
 
 class LessonList extends React.Component {
@@ -14,6 +14,13 @@ class LessonList extends React.Component {
     return (
       <div className="container">
         <StudentShow student={this.props.student} />
+        <br />
+        <Link
+          to={`/student/${this.props.match.params.id}/lessons/create`}
+          className="btn btn-primary"
+        >
+          Add Lesson
+        </Link>
         <br />
         <br />
         <h5>Lessons</h5>

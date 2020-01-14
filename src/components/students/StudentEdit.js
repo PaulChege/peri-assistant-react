@@ -4,7 +4,6 @@ import { updateStudent, getStudent } from "../../actions/students";
 import { getInstrumentList } from "../../actions/instruments";
 import StudentForm from "./StudentForm";
 
-// TODO - Refactor using StudentForm
 class StudentEdit extends React.Component {
   componentDidMount() {
     this.props.getInstrumentList();
