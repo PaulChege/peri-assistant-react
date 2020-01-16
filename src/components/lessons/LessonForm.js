@@ -91,7 +91,7 @@ class LessonForm extends React.Component {
             </div>
           </div>
           <br />
-          <button className="btn btn-primary">Add Lesson</button>
+          <button className="btn btn-primary">Save</button>
         </form>
       </div>
     );

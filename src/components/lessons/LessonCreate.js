@@ -1,9 +1,12 @@
 import React from "react";
 import LessonForm from "./LessonForm";
 import { connect } from "react-redux";
+import { createLesson } from "../../actions/lessons";
 
 class LessonCreate extends React.Component {
-  onSubmit = () => {};
+  onSubmit = formValues => {
+    this.props.createLesson(this.props.match.params.id, formValues);
+  };
   render() {
     return (
       <LessonForm
@@ -17,8 +20,8 @@ class LessonCreate extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    erros: {}
+    errors: state.errors.lessonCreateError
   };
 };
 
-export default connect(mapStateToProps)(LessonCreate);
+export default connect(mapStateToProps, { createLesson })(LessonCreate);
