@@ -23,6 +23,7 @@ export const getStudentList = () => async dispatch => {
 };
 
 export const createStudent = formValues => async dispatch => {
+  console.log(formValues);
   try {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.post("/students", {

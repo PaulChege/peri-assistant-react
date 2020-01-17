@@ -64,13 +64,9 @@ class LessonForm extends React.Component {
                     <div className="form-group">
                       <select {...input} className="form-control">
                         <option></option>
-                        {["Attended", "Cancellled", "Missed"].map(
-                          (status, index) => (
-                            <option key={index} value={status}>
-                              {status}
-                            </option>
-                          )
-                        )}
+                        <option value="attended">Attended</option>
+                        <option value="missed">Missed</option>
+                        <option value="cancelled">Cancelled</option>
                       </select>
                     </div>
                   );
@@ -84,9 +80,17 @@ class LessonForm extends React.Component {
               <label>Paid</label>
               <Field
                 name="paid"
-                component={({ input }) =>
-                  this.renderForm(input, "", "checkbox")
-                }
+                component={({ input }) => {
+                  return (
+                    <div className="form-group">
+                      <input
+                        {...input}
+                        type="checkbox"
+                        className="form-control"
+                      />
+                    </div>
+                  );
+                }}
               />
             </div>
           </div>

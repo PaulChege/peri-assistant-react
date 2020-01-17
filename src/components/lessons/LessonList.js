@@ -4,6 +4,7 @@ import { getLessonList } from "../../actions/lessons";
 import { getStudent } from "../../actions/students";
 import { Link } from "react-router-dom";
 import StudentShow from "../students/StudentShow";
+import { getTime, getReadableDate } from "../../helper";
 
 class LessonList extends React.Component {
   componentDidMount() {
@@ -30,23 +31,31 @@ class LessonList extends React.Component {
               <th>Day</th>
               <th>Time</th>
               <th>Duration (minutes)</th>
-              <th>Plan</th>
               <th>Status</th>
               <th>Charge</th>
               <th>Paid</th>
+              <th>Plan</th>
             </tr>
           </thead>
 
           <tbody>
             {this.props.lessons.map(lesson => (
               <tr key={lesson.id}>
-                <td>{lesson.day}</td>
-                <td>{new Date(lesson.time).toUTCString()}</td>
+                <td>{getReadableDate(lesson.day)}</td>
+                <td>{getTime(lesson.time)}</td>
                 <td>{lesson.duration}</td>
-                <td>{lesson.plan}</td>
                 <td>{lesson.status}</td>
                 <td>{lesson.charge}</td>
-                <td>{lesson.paid}</td>
+                <td>{lesson.paid ? "Yes" : "No"}</td>
+                <td>{lesson.plan}</td>
+                <td>
+                  <Link
+                    to={`/student/${this.props.match.params.id}/lesson/${lesson.id}/edit`}
+                    className="btn btn-primary"
+                  >
+                    Edit
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

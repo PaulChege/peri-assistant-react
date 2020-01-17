@@ -16,6 +16,7 @@ class StudentForm extends React.Component {
   }
 
   render() {
+    // TODO - Add lesson_duration and lesson_charge fields
     return (
       <div className="container">
         <br />
