@@ -1,6 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { calculate_age, getReadableDate, getDayofWeek } from "../../helper";
+import {
+  calculate_age,
+  getReadableDate,
+  getDayofWeek,
+  getTime
+} from "../../helper";
 import DeleteModal from "./DeleteModal";
 
 const onClose = e => {
@@ -46,15 +51,24 @@ const StudentShow = ({ student }) => {
                 <b>Goals: </b>
                 {student.goals}
               </li>
-            </ul>
-            <ul style={{ listStyleType: "none" }} className="col-sm-4">
               <li>
                 <b>Started on: </b>
                 {getReadableDate(student.start_date)}
               </li>
+            </ul>
+            <ul style={{ listStyleType: "none" }} className="col-sm-4">
               <li>
                 <b>Usual Lesson Time: </b>
-                {getDayofWeek(student.lesson_day)}s at {student.lesson_time}
+                {getDayofWeek(student.lesson_day)}s at{" "}
+                {getTime(student.lesson_time)}
+              </li>
+              <li>
+                <b>Usual Lesson Duration: </b>
+                {`${student.lesson_duration} minutes`}
+              </li>
+              <li>
+                <b>Usual Lesson Charge: </b>
+                {`Ksh. ${student.lesson_charge}`}
               </li>
             </ul>
           </div>

@@ -10,7 +10,6 @@ import {
 } from "./types";
 import history from "../history";
 import { getToken, logout } from "../auth/auth";
-import { getTime } from "../helper";
 
 export const getStudentList = () => async dispatch => {
   try {
@@ -23,7 +22,6 @@ export const getStudentList = () => async dispatch => {
 };
 
 export const createStudent = formValues => async dispatch => {
-  console.log(formValues);
   try {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.post("/students", {
@@ -46,7 +44,6 @@ export const getStudent = student_id => async dispatch => {
   try {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(`/students/${student_id}`);
-    response.data.lesson_time = getTime(response.data.lesson_time);
     dispatch({ type: STUDENT_SHOW, payload: response.data });
   } catch (error) {
     if (error.response.status === 401) {

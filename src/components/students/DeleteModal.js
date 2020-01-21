@@ -21,7 +21,7 @@ class DeleteModal extends React.Component {
           Delete
         </button>
         <button
-          // TODO - Find better way tomclose modal other than reloading
+          // TODO - Find better way to close modal other than reloading
           onClick={() => window.location.reload()}
           className="btn btn-primary"
         >

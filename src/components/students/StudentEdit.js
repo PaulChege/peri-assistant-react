@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { updateStudent, getStudent } from "../../actions/students";
 import { getInstrumentList } from "../../actions/instruments";
 import StudentForm from "./StudentForm";
+import { getTime } from "../../helper";
 
 class StudentEdit extends React.Component {
   componentDidMount() {
@@ -12,11 +13,19 @@ class StudentEdit extends React.Component {
   onSubmit = formValues => {
     this.props.updateStudent(this.props.match.params.id, formValues);
   };
+  renderInitialValues = () => {
+    if (this.props.initialValues) {
+      return {
+        ...this.props.initialValues,
+        lesson_time: getTime(this.props.initialValues.lesson_time)
+      };
+    }
+  };
   render() {
     return (
       <StudentForm
         title="Edit Student"
-        initialValues={this.props.initialValues}
+        initialValues={this.renderInitialValues()}
         onSubmit={this.onSubmit}
         errors={this.props.errors}
         instrumentList={this.props.instrumentList}

@@ -87,6 +87,7 @@ class LessonForm extends React.Component {
                         {...input}
                         type="checkbox"
                         className="form-control"
+                        checked={input.value}
                       />
                     </div>
                   );

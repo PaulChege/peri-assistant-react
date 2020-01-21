@@ -16,7 +16,6 @@ class StudentForm extends React.Component {
   }
 
   render() {
-    // TODO - Add lesson_duration and lesson_charge fields
     return (
       <div className="container">
         <br />
@@ -69,6 +68,15 @@ class StudentForm extends React.Component {
                 name="start_date"
                 component={({ input }) => this.renderForm(input, "", "date")}
               />
+              <label>Date of Birth: </label>
+              <Field
+                name="date_of_birth"
+                component={({ input }) => this.renderForm(input, "", "date")}
+              />
+              <Field
+                name="goals"
+                component={({ input }) => this.renderForm(input, "Goals")}
+              />
             </div>
             <div className="col-sm-6">
               <label>Usual Lesson Day: </label>
@@ -96,14 +104,17 @@ class StudentForm extends React.Component {
                 name="lesson_time"
                 component={({ input }) => this.renderForm(input, "", "time")}
               />
-              <label>Date of Birth: </label>
+
+              <label>Usual Lesson Duration: </label>
               <Field
-                name="date_of_birth"
-                component={({ input }) => this.renderForm(input, "", "date")}
+                name="lesson_duration"
+                component={({ input }) => this.renderForm(input, "", "number")}
               />
+
+              <label>Usual Lesson Charge: </label>
               <Field
-                name="goals"
-                component={({ input }) => this.renderForm(input, "Goals")}
+                name="lesson_charge"
+                component={({ input }) => this.renderForm(input, "", "number")}
               />
             </div>
           </div>

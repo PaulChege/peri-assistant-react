@@ -9,6 +9,7 @@ import StudentCreate from "./students/StudentCreate";
 import StudentEdit from "./students/StudentEdit";
 import LessonList from "./lessons/LessonList";
 import LessonCreate from "./lessons/LessonCreate";
+import LessonEdit from "./lessons/LessonEdit";
 
 class App extends React.Component {
   render() {
@@ -27,6 +28,11 @@ class App extends React.Component {
               path="/student/:id/lessons/create"
               exact
               component={LessonCreate}
+            />
+            <Route
+              path="/student/:studentId/lesson/:id/edit"
+              exact
+              component={LessonEdit}
             />
           </Switch>
         </Router>
