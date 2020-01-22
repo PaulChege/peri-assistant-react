@@ -64,11 +64,13 @@ const StudentShow = ({ student }) => {
               </li>
               <li>
                 <b>Usual Lesson Duration: </b>
-                {`${student.lesson_duration} minutes`}
+                {`${
+                  student == null ? student.lesson_duration + " minutes" : ""
+                }`}
               </li>
               <li>
                 <b>Usual Lesson Charge: </b>
-                {`Ksh. ${student.lesson_charge}`}
+                {` ${student == null ? "Ksh" + student.lesson_charge : ""}`}
               </li>
             </ul>
           </div>

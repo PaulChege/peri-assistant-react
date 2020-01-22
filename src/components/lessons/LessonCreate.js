@@ -3,7 +3,7 @@ import LessonForm from "./LessonForm";
 import { connect } from "react-redux";
 import { createLesson } from "../../actions/lessons";
 import { getStudent } from "../../actions/students";
-import { getTime } from "../../helper";
+import { getTime, getDateFromDay } from "../../helper";
 
 class LessonCreate extends React.Component {
   componentDidMount() {
@@ -17,8 +17,8 @@ class LessonCreate extends React.Component {
   renderInitialValues = () => {
     const { student } = this.props;
     if (student) {
-      // TODO - initial value of lesson day should be based on student's usual lesson day
       return {
+        day: getDateFromDay(student.lesson_day),
         paid: false,
         duration: student.lesson_duration,
         charge: student.lesson_charge,

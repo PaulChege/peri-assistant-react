@@ -56,6 +56,16 @@ class LessonList extends React.Component {
                     Edit
                   </Link>
                 </td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    data-toggle="modal"
+                    data-target="#primaryModal"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

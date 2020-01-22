@@ -46,3 +46,15 @@ export const getTime = datetime => {
   const time = new Date(datetime);
   return `${time.getUTCHours()}:${time.getUTCMinutes()}:00`;
 };
+
+export const getDateFromDay = day => {
+  var now = new Date();
+  return (
+    now.getFullYear() +
+    "-" +
+    now.getMonth() +
+    1 +
+    "-" +
+    (now.getDate() + ((7 + day - now.getDay()) % 7) + 1)
+  );
+};
