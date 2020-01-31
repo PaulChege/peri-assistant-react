@@ -3,11 +3,7 @@ import ReactDOM from "react-dom";
 
 const Modal = props => {
   return ReactDOM.createPortal(
-    <div
-      className="modal fade"
-      id="primaryModal"
-      onClick={() => props.onDismiss()}
-    >
+    <div className="modal fade" id={props.id} onClick={() => props.onDismiss()}>
       <div
         className="modal-dialog"
         onClick={e => e.stopPropagation()}

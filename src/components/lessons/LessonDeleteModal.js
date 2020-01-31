@@ -2,19 +2,18 @@ import React from "react";
 import Modal from "../Modal";
 import history from "../../history";
 import { connect } from "react-redux";
-import { getStudent, deleteStudent } from "../../actions/students";
+import { getLesson, deleteLesson } from "../../actions/lessons";
 
-class DeleteModal extends React.Component {
-  componentDidMount() {
-    this.props.getStudent(this.props.student.id);
-  }
+class LessonDeleteModal extends React.Component {
   renderActions() {
-    const { id } = this.props.student;
     return (
       <React.Fragment>
         <button
           onClick={() => {
-            this.props.deleteStudent(id);
+            this.props.deleteLesson(
+              this.props.student.id,
+              this.props.lesson.id
+            );
           }}
           className="btn btn-danger"
         >
@@ -31,21 +30,14 @@ class DeleteModal extends React.Component {
     );
   }
 
-  renderContent() {
-    if (!this.props.student) {
-      return "Are you sure you want to delete?";
-    } else {
-      return `Are you sure you want to delete the student: ${this.props.student.name}?`;
-    }
-  }
-
   render() {
     return (
       <div>
         <Modal
           title="Delete Student"
-          content={this.renderContent()}
+          content="Are you sure you want to delete the lesson?"
           actions={this.renderActions()}
+          id={this.props.id}
           onDismiss={() => {
             history.push(`/student/${this.props.student.id}/lessons`);
           }}
@@ -55,12 +47,4 @@ class DeleteModal extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    student: state.students[ownProps.student.id]
-  };
-};
-
-export default connect(mapStateToProps, { getStudent, deleteStudent })(
-  DeleteModal
-);
+export default connect(null, { getLesson, deleteLesson })(LessonDeleteModal);

@@ -5,12 +5,17 @@ import { getStudent } from "../../actions/students";
 import { Link } from "react-router-dom";
 import StudentShow from "../students/StudentShow";
 import { getTime, getReadableDate } from "../../helper";
+import LessonDeleteModal from "./LessonDeleteModal";
 
 class LessonList extends React.Component {
   componentDidMount() {
     this.props.getStudent(this.props.match.params.id);
     this.props.getLessonList(this.props.match.params.id);
   }
+
+  onClose = e => {
+    this.props.onClose && this.props.onClose(e);
+  };
   render() {
     return (
       <div className="container">
@@ -25,12 +30,12 @@ class LessonList extends React.Component {
         <br />
         <br />
         <h5>Lessons</h5>
-        <table className="table table-bordered">
-          <thead>
+        <table className="table table-bordered table-responsive-sm table-sm">
+          <thead className="thead-light">
             <tr>
               <th>Day</th>
               <th>Time</th>
-              <th>Duration (minutes)</th>
+              <th>Duration(min)</th>
               <th>Status</th>
               <th>Charge</th>
               <th>Paid</th>
@@ -55,16 +60,21 @@ class LessonList extends React.Component {
                   >
                     Edit
                   </Link>
-                </td>
-                <td>
+
                   <button
                     type="button"
                     className="btn btn-danger"
                     data-toggle="modal"
-                    data-target="#primaryModal"
+                    data-target={`#lessonDeleteModal${lesson.id}`}
                   >
                     Delete
                   </button>
+                  <LessonDeleteModal
+                    onClose={this.onClose}
+                    student={this.props.student}
+                    lesson={lesson}
+                    id={`lessonDeleteModal${lesson.id}`}
+                  />
                 </td>
               </tr>
             ))}

@@ -5,7 +5,8 @@ import {
   STUDENT_LESSONS_CREATE_FAILED,
   STUDENT_LESSONS_UPDATE,
   STUDENT_LESSONS_UPDATE_FAILED,
-  STUDENT_LESSONS_SHOW
+  STUDENT_LESSONS_SHOW,
+  STUDENT_LESSONS_DELETE
 } from "./types";
 import { logout, getToken } from "../auth/auth";
 import history from "../history";
@@ -75,5 +76,18 @@ export const updateLesson = (
       type: STUDENT_LESSONS_UPDATE_FAILED,
       payload: error.response.data.message
     });
+  }
+};
+
+export const deleteLesson = (studentId, lessonId) => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    await periAssistantApi.delete(`/students/${studentId}/lessons/${lessonId}`);
+    dispatch({ type: STUDENT_LESSONS_DELETE, payload: lessonId });
+    window.location.reload();
+  } catch (error) {
+    if (error.response.status === 401) {
+      logout(dispatch);
+    }
   }
 };

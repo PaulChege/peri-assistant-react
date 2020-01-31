@@ -6,7 +6,7 @@ import {
   getDayofWeek,
   getTime
 } from "../../helper";
-import DeleteModal from "./DeleteModal";
+import StudentDeleteModal from "./StudentDeleteModal";
 
 const onClose = e => {
   this.props.onClose && this.props.onClose(e);
@@ -85,13 +85,13 @@ const StudentShow = ({ student }) => {
               type="button"
               className="btn btn-danger"
               data-toggle="modal"
-              data-target="#primaryModal"
+              data-target="#studentDeleteModal"
             >
               Delete
             </button>
           </div>
         </div>
-        <DeleteModal onClose={onClose} student={student} />
+        <StudentDeleteModal onClose={onClose} student={student} />
       </div>
     );
   }
