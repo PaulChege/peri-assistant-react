@@ -23,11 +23,6 @@ class StudentList extends React.Component {
               return (
                 <div className="col-sm-3" key={student.id}>
                   <div className="card">
-                    <img
-                      className="card-img-top"
-                      src="/profile.png"
-                      alt="profile"
-                    />
                     <div className="card-body">
                       <h5 className="card-title">{student.name}</h5>
                       <p className="card-text">{student.institution}</p>
