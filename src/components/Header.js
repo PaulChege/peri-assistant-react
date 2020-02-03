@@ -13,10 +13,13 @@ class Header extends React.Component {
     if (getToken()) {
       return (
         <div>
-          <Link className="btn btn-primary" to="/">
+          <Link className="btn btn-primary btn-sm" to={"/"}>
             Account
           </Link>
-          <button className="btn btn-primary" onClick={() => this.onLogOut()}>
+          <button
+            className="btn btn-primary btn-sm mx-sm-2"
+            onClick={() => this.onLogOut()}
+          >
             Log Out
           </button>
         </div>
@@ -39,7 +42,7 @@ class Header extends React.Component {
       <div>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <Link to="/" className="navbar-brand">
-            <img alt="logo" width="45x" height="45px" src="/logo.png" />
+            <img alt="logo" width="30x" height="30px" src="/logo.png" />
           </Link>
           <button
             className="navbar-toggler"
@@ -52,7 +55,7 @@ class Header extends React.Component {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <h3>Peri Assistant</h3>
+          <h4>Peri Assistant</h4>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul className="navbar-nav mr-auto"></ul>
             <span className="navbar-text">{this.renderLogin()}</span>

@@ -23,7 +23,7 @@ class LessonList extends React.Component {
         <br />
         <Link
           to={`/student/${this.props.match.params.id}/lessons/create`}
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
         >
           Add Lesson
         </Link>
@@ -56,14 +56,14 @@ class LessonList extends React.Component {
                 <td>
                   <Link
                     to={`/student/${this.props.match.params.id}/lesson/${lesson.id}/edit`}
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-sm"
                   >
                     Edit
                   </Link>
 
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-danger btn-sm mx-sm-3"
                     data-toggle="modal"
                     data-target={`#lessonDeleteModal${lesson.id}`}
                   >

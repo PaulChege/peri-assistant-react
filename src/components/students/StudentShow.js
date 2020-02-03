@@ -65,25 +65,31 @@ const StudentShow = ({ student }) => {
               <li>
                 <b>Usual Lesson Duration: </b>
                 {`${
-                  student == null ? student.lesson_duration + " minutes" : ""
+                  student.lesson_duration !== null
+                    ? student.lesson_duration + " minutes"
+                    : ""
                 }`}
               </li>
               <li>
                 <b>Usual Lesson Charge: </b>
-                {` ${student == null ? "Ksh" + student.lesson_charge : ""}`}
+                {` ${
+                  student.lesson_charge !== null
+                    ? "Ksh " + student.lesson_charge
+                    : ""
+                }`}
               </li>
             </ul>
           </div>
           <div className="float-right">
             <Link
               to={`/student/${student.id}/edit`}
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm"
             >
               Edit
             </Link>
             <button
               type="button"
-              className="btn btn-danger"
+              className="btn btn-danger btn-sm mx-sm-2"
               data-toggle="modal"
               data-target="#studentDeleteModal"
             >

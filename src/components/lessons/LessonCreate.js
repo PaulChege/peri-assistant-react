@@ -16,6 +16,7 @@ class LessonCreate extends React.Component {
 
   renderInitialValues = () => {
     const { student } = this.props;
+
     if (student) {
       return {
         day: getDateFromDay(student.lesson_day),

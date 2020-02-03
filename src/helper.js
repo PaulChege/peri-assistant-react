@@ -48,13 +48,12 @@ export const getTime = datetime => {
 };
 
 export const getDateFromDay = day => {
-  var now = new Date();
-  return (
-    now.getFullYear() +
-    "-" +
-    now.getMonth() +
-    1 +
-    "-" +
-    (now.getDate() + ((7 + day - now.getDay()) % 7) + 1)
-  );
+  var date = new Date();
+  var diff =
+    date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1) + day;
+  date = new Date(date.setDate(diff));
+  var date_num = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+  var month_num =
+    date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+  return date.getFullYear() + "-" + month_num + "-" + date_num;
 };

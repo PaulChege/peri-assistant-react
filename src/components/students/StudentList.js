@@ -13,7 +13,7 @@ class StudentList extends React.Component {
         <div className="container">
           <h4>Students</h4>
           <br />
-          <Link to="/student/create" className="btn btn-primary">
+          <Link to="/student/create" className="btn btn-primary btn-sm">
             Add Student
           </Link>
           <br />
@@ -29,7 +29,7 @@ class StudentList extends React.Component {
                       <p className="card-text">{student.instrument}</p>
                       <Link
                         to={`/student/${student.id}/lessons`}
-                        className="btn btn-primary"
+                        className="btn btn-primary btn-sm"
                       >
                         View Lessons
                       </Link>

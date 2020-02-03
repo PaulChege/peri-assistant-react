@@ -46,7 +46,9 @@ class LessonEdit extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    initialValues: state.lessons[ownProps.match.params.id],
+    initialValues: state.lessons.find(
+      lesson => lesson.id === parseInt(ownProps.match.params.id)
+    ),
     student: state.students[ownProps.match.params.studentId],
     errors: state.errors.lessonUpdateError
   };
