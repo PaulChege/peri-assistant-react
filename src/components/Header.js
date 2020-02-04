@@ -3,23 +3,36 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../auth/auth";
 import { getToken } from "../auth/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import "../styling/styles.css";
 
 class Header extends React.Component {
   onLogOut = () => {
-    this.props.userLogout();
+    this.props.logout();
+  };
+
+  buttonStyle = {
+    color: "white"
   };
 
   renderLogin = () => {
     if (getToken()) {
       return (
         <div>
-          <Link className="btn btn-primary btn-sm" to={"/"}>
+          <Link
+            style={this.buttonStyle}
+            className="btn btn-primary btn-sm"
+            to={"/"}
+          >
+            <FontAwesomeIcon icon={faUserCircle} className="icon-padded" />
             Account
           </Link>
           <button
             className="btn btn-primary btn-sm mx-sm-2"
             onClick={() => this.onLogOut()}
           >
+            <FontAwesomeIcon icon={faSignOutAlt} className="icon-padded" />
             Log Out
           </button>
         </div>
@@ -27,10 +40,18 @@ class Header extends React.Component {
     }
     return (
       <div>
-        <Link className="btn btn-primary" to="/login">
+        <Link
+          className="btn btn-primary btn-sm mx-sm-3"
+          to="/login"
+          style={this.buttonStyle}
+        >
           Log In
         </Link>
-        <Link className="btn btn-primary" to="/signup">
+        <Link
+          className="btn btn-primary btn-sm"
+          to="/signup"
+          style={this.buttonStyle}
+        >
           Sign Up
         </Link>
       </div>

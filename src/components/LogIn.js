@@ -22,7 +22,7 @@ class LogIn extends React.Component {
   }
   render() {
     return (
-      <div className="col-sm-5">
+      <div className="col-sm-4 mx-auto">
         <br />
         <h3>Log In</h3>
         <p className="text-danger">{this.props.errors}</p>

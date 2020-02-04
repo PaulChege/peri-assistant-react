@@ -1,9 +1,9 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userCreate } from "../../actions/users";
+import { userEdit } from "../../actions/users";
 
-class UserCreate extends React.Component {
+class UserEdit extends React.Component {
   onSubmit = formValues => {
     this.props.userCreate(formValues);
   };

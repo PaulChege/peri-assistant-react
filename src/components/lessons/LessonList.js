@@ -29,7 +29,7 @@ class LessonList extends React.Component {
         </Link>
         <br />
         <br />
-        <h5>Lessons</h5>
+        <h5>Lessons{` (${this.props.lessons.length})`}</h5>
         <table className="table table-bordered table-responsive-sm table-sm">
           <thead className="thead-light">
             <tr>
