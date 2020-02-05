@@ -4,7 +4,8 @@ import {
   STUDENT_LESSONS_CREATE_FAILED,
   STUDENT_LESSONS_UPDATE_FAILED,
   USER_LOGIN_FAILED,
-  USER_CREATE_FAILED
+  USER_CREATE_FAILED,
+  USER_EDIT_FAILED
 } from "../actions/types";
 
 export default (state = {}, action) => {
@@ -17,6 +18,8 @@ export default (state = {}, action) => {
       return { ...state, userLoginError: action.payload };
     case USER_CREATE_FAILED:
       return { ...state, userCreateError: action.payload };
+    case USER_EDIT_FAILED:
+      return { ...state, userEditError: action.payload };
     case STUDENT_LESSONS_CREATE_FAILED:
       return { ...state, lessonCreateError: action.payload };
     case STUDENT_LESSONS_UPDATE_FAILED:

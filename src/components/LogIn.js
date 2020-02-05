@@ -1,11 +1,11 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userLogin } from "../actions/users";
+import { loginUser } from "../actions/users";
 
 class LogIn extends React.Component {
   onSubmit = formValues => {
-    this.props.userLogin(formValues);
+    this.props.loginUser(formValues);
   };
 
   renderForm(input, placeholder, type = "") {
@@ -51,6 +51,6 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { userLogin })(
+export default connect(mapStateToProps, { loginUser })(
   reduxForm({ form: "userLogin" })(LogIn)
 );

@@ -1,11 +1,11 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userCreate } from "../../actions/users";
+import { createUser } from "../../actions/users";
 
 class UserCreate extends React.Component {
   onSubmit = formValues => {
-    this.props.userCreate(formValues);
+    this.props.createUser(formValues);
   };
 
   renderForm(input, placeholder, type = "") {
@@ -54,6 +54,6 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { userCreate })(
+export default connect(mapStateToProps, { createUser })(
   reduxForm({ form: "userCreateForm" })(UserCreate)
 );

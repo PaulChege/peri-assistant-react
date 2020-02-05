@@ -4,13 +4,19 @@ import {
   USER_CREATE,
   USER_CREATE_FAILED,
   USER_LOGIN,
-  USER_LOGIN_FAILED
+  USER_LOGIN_FAILED,
+  USER_EDIT,
+  USER_EDIT_FAILED,
+  USER_SHOW,
+  USER_DELETE
 } from "./types";
-import { setToken } from "../auth/auth";
+import { setToken, getToken, logout } from "../auth/auth";
 
-export const userCreate = formValues => async dispatch => {
+export const createUser = formValues => async dispatch => {
   try {
-    const response = await periAssistantApi.post("/signup", formValues);
+    const response = await periAssistantApi.post("/signup", {
+      user: formValues
+    });
     setToken(response.data.token);
     dispatch({
       type: USER_CREATE,
@@ -25,7 +31,7 @@ export const userCreate = formValues => async dispatch => {
   }
 };
 
-export const userLogin = formValues => async dispatch => {
+export const loginUser = formValues => async dispatch => {
   try {
     const response = await periAssistantApi.post("/auth/login", formValues);
     setToken(response.data.token);
@@ -40,5 +46,55 @@ export const userLogin = formValues => async dispatch => {
       type: USER_LOGIN_FAILED,
       payload: error.response.data.message
     });
+  }
+};
+
+export const updateUser = formValues => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    const response = await periAssistantApi.put(`/user`, {
+      user: formValues
+    });
+    dispatch({
+      type: USER_EDIT,
+      payload: response.data.user
+    });
+    window.location.reload();
+  } catch (error) {
+    dispatch({
+      type: USER_EDIT_FAILED,
+      payload: error.response.data.message
+    });
+  }
+};
+
+export const getUser = () => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    const response = await periAssistantApi.get(`/user`);
+    dispatch({
+      type: USER_SHOW,
+      payload: response.data
+    });
+  } catch (error) {
+    if (error.response.status === 401) {
+      logout(dispatch);
+    }
+  }
+};
+
+export const deleteUser = () => async dispatch => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    await periAssistantApi.delete(`/user`);
+    dispatch({
+      type: USER_DELETE
+    });
+    history.push("/login");
+    window.location.reload();
+  } catch (error) {
+    if (error.response.status === 401) {
+      logout(dispatch);
+    }
   }
 };

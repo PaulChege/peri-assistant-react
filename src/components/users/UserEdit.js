@@ -1,11 +1,18 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { userEdit } from "../../actions/users";
+import { updateUser, getUser } from "../../actions/users";
+import UserDeleteModal from "../users/UserDeleteModal";
 
 class UserEdit extends React.Component {
+  componentDidMount() {
+    this.props.getUser();
+  }
   onSubmit = formValues => {
-    this.props.userCreate(formValues);
+    this.props.updateUser(formValues);
+  };
+  onClose = e => {
+    this.props.onClose && this.props.onClose(e);
   };
 
   renderForm(input, placeholder, type = "") {
@@ -24,25 +31,34 @@ class UserEdit extends React.Component {
     return (
       <div className="col-sm-4 mx-auto">
         <br />
-        <h3>Sign Up</h3>
+        <h4>Account Details</h4>
+        <br />
+        <label>Email: </label>
+        <p>
+          <i>
+            {this.props.initialValues ? this.props.initialValues.email : ""}
+          </i>
+        </p>
         <p className="text-danger">{this.props.errors}</p>
         <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
+          <label>Name:</label>
           <Field
             name="name"
             component={({ input }) => this.renderForm(input, "Name")}
           />
-          <Field
-            name="email"
-            component={({ input }) => this.renderForm(input, "Email", "email")}
-          />
-          <Field
-            name="password"
-            component={({ input }) =>
-              this.renderForm(input, "Password", "password")
-            }
-          />
-          <button className="btn btn-primary">Sign Up</button>
+          <button className="btn btn-primary">Save</button>
         </form>
+        <br />
+        <br />
+        <button
+          type="button"
+          className="btn btn-outline-danger btn-sm"
+          data-toggle="modal"
+          data-target="#userDeleteModal"
+        >
+          Delete Account
+        </button>
+        <UserDeleteModal onClose={this.onClose} />
       </div>
     );
   }
@@ -50,10 +66,11 @@ class UserEdit extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    errors: state.errors.userCreateError
+    initialValues: state.user.currentUser,
+    errors: state.errors.userEditError
   };
 };
 
-export default connect(mapStateToProps, { userCreate })(
-  reduxForm({ form: "userCreateForm" })(UserCreate)
+export default connect(mapStateToProps, { updateUser, getUser })(
+  reduxForm({ form: "userEditForm" })(UserEdit)
 );

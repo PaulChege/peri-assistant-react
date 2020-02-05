@@ -2,16 +2,24 @@ import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import Login from "./LogIn";
 import UserCreate from "./users/UserCreate";
-import history from "../history";
-import Header from "./Header";
+import UserEdit from "./users/UserEdit";
 import StudentList from "./students/StudentList";
 import StudentCreate from "./students/StudentCreate";
 import StudentEdit from "./students/StudentEdit";
 import LessonList from "./lessons/LessonList";
 import LessonCreate from "./lessons/LessonCreate";
 import LessonEdit from "./lessons/LessonEdit";
+import history from "../history";
+import Header from "./Header";
+import { getToken } from "../auth/auth";
 
 class App extends React.Component {
+  componentDidMount() {
+    const token = getToken();
+    if (token == null) {
+      history.push("/login");
+    }
+  }
   render() {
     return (
       <div>
@@ -21,6 +29,7 @@ class App extends React.Component {
             <Route path="/" exact component={StudentList} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={UserCreate} />
+            <Route path="/user" exact component={UserEdit} />
             <Route path="/student/create" exact component={StudentCreate} />
             <Route path="/student/:id/edit" exact component={StudentEdit} />
             <Route path="/student/:id/lessons" exact component={LessonList} />

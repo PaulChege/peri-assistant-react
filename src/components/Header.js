@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { logout } from "../auth/auth";
-import { getToken } from "../auth/auth";
+import { logout, getToken } from "../auth/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import "../styling/styles.css";
@@ -23,7 +22,7 @@ class Header extends React.Component {
           <Link
             style={this.buttonStyle}
             className="btn btn-primary btn-sm"
-            to={"/"}
+            to={`/user`}
           >
             <FontAwesomeIcon icon={faUserCircle} className="icon-padded" />
             Account

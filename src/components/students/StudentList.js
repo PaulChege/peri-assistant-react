@@ -5,17 +5,10 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
 import "../../styling/styles.css";
-import { getToken } from "../../auth/auth";
-import history from "../../history";
 
 class StudentList extends React.Component {
   componentDidMount() {
-    const token = getToken();
-    if (token == null) {
-      history.push("/login");
-    } else {
-      this.props.getStudentList();
-    }
+    this.props.getStudentList();
   }
 
   render() {

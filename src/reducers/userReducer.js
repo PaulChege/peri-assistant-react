@@ -1,4 +1,11 @@
-import { USER_CREATE, USER_LOGIN, USER_LOGOUT } from "../actions/types";
+import {
+  USER_CREATE,
+  USER_EDIT,
+  USER_LOGIN,
+  USER_LOGOUT,
+  USER_SHOW,
+  USER_DELETE
+} from "../actions/types";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -6,6 +13,12 @@ export default (state = {}, action) => {
       return { ...state, currentUser: action.payload, isSignedIn: true };
     case USER_CREATE:
       return { ...state, currentUser: action.payload, isSignedIn: true };
+    case USER_EDIT:
+      return { ...state, currentUser: action.payload };
+    case USER_SHOW:
+      return { ...state, currentUser: action.payload };
+    case USER_DELETE:
+      return { isSignedIn: false };
     case USER_LOGOUT:
       return { isSignedIn: false };
     default:
