@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login Component should render form 1`] = `
+<div
+  className="col-sm-4 mx-auto"
+>
+  <br />
+  <h3>
+    Log In
+  </h3>
+  <p
+    className="text-danger"
+  />
+  <form
+    id="loginForm"
+    onSubmit={[Function]}
+  >
+    <div
+      className="form-group"
+    >
+      <input
+        className="form-control"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onDragStart={[Function]}
+        onDrop={[Function]}
+        onFocus={[Function]}
+        placeholder="Email"
+        type="email"
+        value=""
+      />
+    </div>
+    <div
+      className="form-group"
+    >
+      <input
+        className="form-control"
+        name="password"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onDragStart={[Function]}
+        onDrop={[Function]}
+        onFocus={[Function]}
+        placeholder="Password"
+        type="password"
+        value=""
+      />
+    </div>
+    <button
+      className="btn btn-primary"
+    >
+      Log In
+    </button>
+  </form>
+</div>
+`;

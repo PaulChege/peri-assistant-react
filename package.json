@@ -21,6 +21,7 @@
     "react-scripts": "^3.2.0",
     "redux": "^4.0.4",
     "redux-form": "^8.2.6",
+    "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
@@ -46,5 +47,10 @@
   },
   "engines": {
     "node": "12.13.0"
+  },
+  "devDependencies": {
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "react-test-renderer": "^16.12.0"
   }
 }

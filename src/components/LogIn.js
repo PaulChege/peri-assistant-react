@@ -26,7 +26,7 @@ class LogIn extends React.Component {
         <br />
         <h3>Log In</h3>
         <p className="text-danger">{this.props.errors}</p>
-        <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
+        <form id="loginForm" onSubmit={this.props.handleSubmit(this.onSubmit)}>
           <Field
             name="email"
             component={({ input }) => this.renderForm(input, "Email", "email")}
