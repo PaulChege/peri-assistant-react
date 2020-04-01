@@ -4,6 +4,7 @@ import { updateStudent, getStudent } from "../../actions/students";
 import { getInstrumentList } from "../../actions/instruments";
 import StudentForm from "./StudentForm";
 import { getTime } from "../../helper";
+import { trackPromise } from "react-promise-tracker";
 
 class StudentEdit extends React.Component {
   componentDidMount() {
@@ -11,7 +12,9 @@ class StudentEdit extends React.Component {
     this.props.getStudent(this.props.match.params.id);
   }
   onSubmit = formValues => {
-    this.props.updateStudent(this.props.match.params.id, formValues);
+    trackPromise(
+      this.props.updateStudent(this.props.match.params.id, formValues)
+    );
   };
   renderInitialValues = () => {
     if (this.props.initialValues) {

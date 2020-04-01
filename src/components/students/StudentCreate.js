@@ -3,13 +3,14 @@ import { connect } from "react-redux";
 import { createStudent } from "../../actions/students";
 import { getInstrumentList } from "../../actions/instruments";
 import StudentForm from "../../components/students/StudentForm";
+import { trackPromise } from "react-promise-tracker";
 
 class StudentCreate extends React.Component {
   componentDidMount() {
     this.props.getInstrumentList();
   }
   onSubmit = formValues => {
-    this.props.createStudent(formValues);
+    trackPromise(this.props.createStudent(formValues));
   };
   render() {
     return (

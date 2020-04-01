@@ -2,10 +2,12 @@ import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { createUser } from "../../actions/users";
+import { trackPromise } from "react-promise-tracker";
+import LoadingIndicator from "../LoadingIndicator";
 
 class UserCreate extends React.Component {
   onSubmit = formValues => {
-    this.props.createUser(formValues);
+    trackPromise(this.props.createUser(formValues));
   };
 
   renderForm(input, placeholder, type = "") {
@@ -42,6 +44,7 @@ class UserCreate extends React.Component {
             }
           />
           <button className="btn btn-primary">Sign Up</button>
+          <LoadingIndicator />
         </form>
       </div>
     );

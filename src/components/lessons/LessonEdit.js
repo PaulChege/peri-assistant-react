@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { updateLesson, getLesson } from "../../actions/lessons";
 import { getStudent } from "../../actions/students";
 import { getTime } from "../../helper";
+import { trackPromise } from "react-promise-tracker";
 
 class LessonEdit extends React.Component {
   componentDidMount() {
@@ -13,7 +14,7 @@ class LessonEdit extends React.Component {
   }
   onSubmit = formValues => {
     const { studentId, id } = this.props.match.params;
-    this.props.updateLesson(studentId, id, formValues);
+    trackPromise(this.props.updateLesson(studentId, id, formValues));
   };
 
   renderTitle = () => {

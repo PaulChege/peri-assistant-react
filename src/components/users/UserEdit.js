@@ -3,13 +3,15 @@ import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import { updateUser, getUser } from "../../actions/users";
 import UserDeleteModal from "../users/UserDeleteModal";
+import { trackPromise } from "react-promise-tracker";
+import LoadingIndicator from "../LoadingIndicator";
 
 class UserEdit extends React.Component {
   componentDidMount() {
     this.props.getUser();
   }
   onSubmit = formValues => {
-    this.props.updateUser(formValues);
+    trackPromise(this.props.updateUser(formValues));
   };
   onClose = e => {
     this.props.onClose && this.props.onClose(e);
@@ -47,6 +49,7 @@ class UserEdit extends React.Component {
             component={({ input }) => this.renderForm(input, "Name")}
           />
           <button className="btn btn-primary">Save</button>
+          <LoadingIndicator />
         </form>
         <br />
         <br />

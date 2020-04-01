@@ -1,5 +1,6 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
+import LoadingIndicator from "../LoadingIndicator";
 
 class StudentForm extends React.Component {
   renderForm(input, placeholder, type = "") {
@@ -119,6 +120,7 @@ class StudentForm extends React.Component {
             </div>
           </div>
           <br />
+          <LoadingIndicator />
           <button className="btn btn-primary">Save</button>
         </form>
       </div>
