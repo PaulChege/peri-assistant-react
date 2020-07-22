@@ -4,9 +4,13 @@ import { connect } from "react-redux";
 import { loginUser } from "../actions/users";
 import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "./LoadingIndicator";
+import { GoogleLogin, GoogleLogout } from "react-google-login";
+
+const CLIENT_ID =
+  "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
 
 class LogIn extends React.Component {
-  onSubmit = formValues => {
+  onSubmit = (formValues) => {
     trackPromise(this.props.loginUser(formValues));
   };
 
@@ -22,6 +26,20 @@ class LogIn extends React.Component {
       </div>
     );
   }
+  handleLoginFailure(response) {
+    console.log(response);
+    // alert("Failed to log in");
+  }
+  login(response) {
+    console.log(response);
+    // if (response.accessToken) {
+    //   this.setState((state) => ({
+    //     isLogined: true,
+    //     accessToken: response.accessToken,
+    //   }));
+    // }
+  }
+
   render() {
     return (
       <div className="col-sm-4 mx-auto">
@@ -42,14 +60,23 @@ class LogIn extends React.Component {
           <button className="btn btn-primary">Log In</button>
           <LoadingIndicator />
         </form>
+        <br />
+        <GoogleLogin
+          clientId={CLIENT_ID}
+          buttonText="Sign in with Google"
+          onSuccess={this.login}
+          onFailure={this.handleLoginFailure}
+          cookiePolicy={"single_host_origin"}
+          responseType="code,token"
+        />
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    errors: state.errors.userLoginError
+    errors: state.errors.userLoginError,
   };
 };
 

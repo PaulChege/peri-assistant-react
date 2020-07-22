@@ -16,6 +16,8 @@
     "popper.js": "^1.16.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-google-auth": "^0.4.1",
+    "react-google-login": "^5.1.21",
     "react-loader-spinner": "^3.1.5",
     "react-promise-tracker": "^2.1.0",
     "react-redux": "^7.1.3",
