@@ -1,13 +1,12 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { loginUser } from "../actions/users";
+import { loginUser, googleLoginUser } from "../actions/users";
 import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "./LoadingIndicator";
-import { GoogleLogin, GoogleLogout } from "react-google-login";
+import { GoogleLogin} from "react-google-login";
 
-const CLIENT_ID =
-  "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
+const CLIENT_ID = "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
 
 class LogIn extends React.Component {
   onSubmit = (formValues) => {
@@ -30,14 +29,13 @@ class LogIn extends React.Component {
     console.log(response);
     // alert("Failed to log in");
   }
-  login(response) {
-    console.log(response);
-    // if (response.accessToken) {
-    //   this.setState((state) => ({
-    //     isLogined: true,
-    //     accessToken: response.accessToken,
-    //   }));
-    // }
+  login = (response) => {
+    this.props.googleLoginUser({
+      google_id: response.profileObj.googleId,
+      name: response.profileObj.name,
+      email: response.profileObj.email,
+      image_url: response.profileObj.imageUrl,
+    })
   }
 
   render() {
@@ -80,6 +78,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { loginUser })(
+export default connect(mapStateToProps, { loginUser, googleLoginUser })(
   reduxForm({ form: "userLogin" })(LogIn)
 );

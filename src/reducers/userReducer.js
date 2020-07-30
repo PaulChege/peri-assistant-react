@@ -2,6 +2,7 @@ import {
   USER_CREATE,
   USER_EDIT,
   USER_LOGIN,
+  USER_LOGIN_GOOGLE,
   USER_LOGOUT,
   USER_SHOW,
   USER_DELETE
@@ -10,6 +11,8 @@ import {
 export default (state = {}, action) => {
   switch (action.type) {
     case USER_LOGIN:
+      return { ...state, currentUser: action.payload, isSignedIn: true };
+    case USER_LOGIN_GOOGLE:
       return { ...state, currentUser: action.payload, isSignedIn: true };
     case USER_CREATE:
       return { ...state, currentUser: action.payload, isSignedIn: true };
