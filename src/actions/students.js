@@ -6,7 +6,8 @@ import {
   STUDENT_UPDATE,
   STUDENT_UPDATE_FAILED,
   STUDENT_SHOW,
-  STUDENT_DELETE
+  STUDENT_DELETE,
+  STUDENT_CREATE_SUCCESS
 } from "./types";
 import history from "../history";
 import { getToken, logout } from "../auth/auth";
@@ -31,11 +32,16 @@ export const createStudent = formValues => async dispatch => {
       type: STUDENT_CREATE,
       payload: response.data
     });
+   
     history.push("/");
   } catch (error) {
     dispatch({
       type: STUDENT_CREATE_FAILED,
       payload: error.response.data.message
+    });
+    dispatch({
+      type: STUDENT_CREATE_SUCCESS,
+      payload: {}
     });
   }
 };

@@ -8,14 +8,14 @@ const LoadingIndicator = props => {
     promiseInProgress && (
       <div
         style={{
-          width: "100%",
-          height: "100",
+          width: 100,
+          height: 100,
           display: "flex",
           justifyContent: "center",
           alignItems: "center"
         }}
       >
-        <Loader type="Oval" color="#0275d8" height="50" width="55" />
+        <Loader type="Oval" color="#0275d8" />
       </div>
     )
   );

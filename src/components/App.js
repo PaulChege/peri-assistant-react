@@ -12,6 +12,9 @@ import LessonEdit from "./lessons/LessonEdit";
 import history from "../history";
 import Header from "./Header";
 import { getToken } from "../auth/auth";
+import { connect } from "react-redux";
+import FlashMessage from "react-flash-message";
+import { clearFlash } from "../actions/flash";
 
 class App extends React.Component {
   componentDidMount() {
@@ -20,11 +23,20 @@ class App extends React.Component {
       history.push("/login");
     }
   }
+
+  clearFlash = () => {
+    setTimeout(() => this.props.clearFlash(), 8000);
+  };
+
   render() {
     return (
       <div>
         <Router history={history}>
           <Header />
+          <div>
+            <p>{this.props.flash}</p>
+          </div>
+          {this.clearFlash()}
           <Switch>
             <Route path="/" exact component={StudentList} />
             <Route path="/login" exact component={Login} />
@@ -50,4 +62,8 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return { flash: state.flash.message };
+};
+
+export default connect(mapStateToProps, { clearFlash })(App);
