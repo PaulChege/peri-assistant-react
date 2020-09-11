@@ -13,7 +13,6 @@ import history from "../history";
 import Header from "./Header";
 import { getToken } from "../auth/auth";
 import { connect } from "react-redux";
-import FlashMessage from "react-flash-message";
 import { clearFlash } from "../actions/flash";
 
 class App extends React.Component {
@@ -25,7 +24,7 @@ class App extends React.Component {
   }
 
   clearFlash = () => {
-    setTimeout(() => this.props.clearFlash(), 8000);
+    setTimeout(() => this.props.clearFlash(), 5000);
   };
 
   render() {
@@ -33,9 +32,12 @@ class App extends React.Component {
       <div>
         <Router history={history}>
           <Header />
-          <div>
-            <p>{this.props.flash}</p>
-          </div>
+          {this.props.flash && (
+            <div className="alert alert-success" role="alert">
+              <p>{this.props.flash}</p>
+            </div>
+          )}
+
           {this.clearFlash()}
           <Switch>
             <Route path="/" exact component={StudentList} />

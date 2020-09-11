@@ -1,9 +1,9 @@
-import { STUDENT_CREATE_SUCCESS, CLEAR_FLASH } from "../actions/types";
+import { FLASH_SUCCESS, CLEAR_FLASH } from "../actions/types";
 export default (state = {}, action) => {
   switch (action.type) {
-    case STUDENT_CREATE_SUCCESS:
+    case FLASH_SUCCESS:
       return {
-        message: "Student creation successful",
+        message: action.payload,
       };
     case CLEAR_FLASH:
       return {};
