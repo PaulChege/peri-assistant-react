@@ -12,10 +12,10 @@ import {
 import history from "../history";
 import { getToken, logout } from "../auth/auth";
 
-export const getStudentList = () => async (dispatch) => {
+export const getStudentList = (search = "") => async (dispatch) => {
   try {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
-    const response = await periAssistantApi.get("/students");
+    const response = await periAssistantApi.get(`/students?query=${search}`);
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch {
     logout(dispatch);

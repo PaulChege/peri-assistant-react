@@ -3,14 +3,14 @@ import {
   STUDENT_CREATE,
   STUDENT_UPDATE,
   STUDENT_SHOW,
-  STUDENT_DELETE
+  STUDENT_DELETE,
 } from "../actions/types";
 import _ from "lodash";
 
 export default (state = {}, action) => {
   switch (action.type) {
     case STUDENT_LIST:
-      return { ...state, ..._.mapKeys(action.payload, "id") };
+      return _.mapKeys(action.payload, "id");
     case STUDENT_CREATE:
       return { ...state, [action.payload.id]: action.payload };
     case STUDENT_SHOW:

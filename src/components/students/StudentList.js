@@ -5,18 +5,39 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
 import "../../styling/styles.css";
+import { Field, reduxForm } from "redux-form";
 
 class StudentList extends React.Component {
   componentDidMount() {
     this.props.getStudentList();
   }
 
+  renderSerchForm() {
+    return (
+      <div>
+        <form
+          onSubmit={this.props.handleSubmit((formValues) =>
+            this.props.getStudentList(formValues.search)
+          )}
+        >
+          <div className="row">
+            <div className="col-sm-6">
+              <Field name="search" component="input" type="text" />
+              <button className="btn btn-sm btn-primary">Search</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
   render() {
-    if (this.props.students) {
-      return (
+    return (
+      this.props.students && (
         <div className="container">
           <h4>Students{` (${this.props.students.length})`}</h4>
           <br />
+          {this.renderSerchForm()}
           <Link
             to="/student/create"
             className="btn btn-outline-primary btn-sm float-right"
@@ -28,7 +49,7 @@ class StudentList extends React.Component {
           <br />
           <br />
           <div className="row">
-            {this.props.students.map(student => {
+            {this.props.students.map((student) => {
               return (
                 <div
                   className="col-sm-3"
@@ -57,15 +78,15 @@ class StudentList extends React.Component {
             })}
           </div>
         </div>
-      );
-    }
-    return <div>Loading...</div>;
+      )
+    );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    students: Object.values(state.students)
+    students: Object.values(state.students),
   };
 };
 
-export default connect(mapStateToProps, { getStudentList })(StudentList);
+StudentList = connect(mapStateToProps, { getStudentList })(StudentList);
+export default reduxForm({ form: "searchForm" })(StudentList);
