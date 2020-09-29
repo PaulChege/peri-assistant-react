@@ -17,8 +17,10 @@ export const getStudentList = (search = "") => async (dispatch) => {
     periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(`/students?query=${search}`);
     dispatch({ type: STUDENT_LIST, payload: response.data });
-  } catch {
-    logout(dispatch);
+  } catch (error) {
+    if (error.response.status === 401) {
+      logout(dispatch);
+    }
   }
 };
 
