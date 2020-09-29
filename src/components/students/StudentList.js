@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import { getStudentList } from "../../actions/students";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faAlignJustify } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faAlignJustify,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../styling/styles.css";
 import { Field, reduxForm } from "redux-form";
 
@@ -23,7 +27,10 @@ class StudentList extends React.Component {
           <div className="row">
             <div className="col-sm-6">
               <Field name="search" component="input" type="text" />
-              <button className="btn btn-sm btn-primary">Search</button>
+              <button className="btn btn-sm btn-primary">
+                <FontAwesomeIcon icon={faSearch} className="icon-padded" />
+                Search
+              </button>
             </div>
           </div>
         </form>

@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout, getToken } from "../auth/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserCircle,
+  faSignOutAlt,
+  faGraduationCap,
+} from "@fortawesome/free-solid-svg-icons";
 import "../styling/styles.css";
 
 class Header extends React.Component {
@@ -12,13 +16,21 @@ class Header extends React.Component {
   };
 
   buttonStyle = {
-    color: "white"
+    color: "white",
   };
 
   renderLogin = () => {
     if (getToken()) {
       return (
         <div>
+          <Link
+            style={this.buttonStyle}
+            className="btn btn-primary btn-sm mx-sm-2"
+            to="/"
+          >
+            <FontAwesomeIcon icon={faGraduationCap} className="icon-padded" />
+            Students
+          </Link>
           <Link
             style={this.buttonStyle}
             className="btn btn-primary btn-sm"
@@ -87,9 +99,9 @@ class Header extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    isSignedIn: state.user.isSignedIn
+    isSignedIn: state.user.isSignedIn,
   };
 };
 export default connect(mapStateToProps, { logout })(Header);
