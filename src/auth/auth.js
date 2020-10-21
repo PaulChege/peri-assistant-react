@@ -13,8 +13,8 @@ export const removeToken = () => {
   return localStorage.removeItem("token");
 };
 
-export const logout = (dispatch) => {
+export const logout = () => {
   removeToken();
-  dispatch({ type: USER_LOGOUT, payload: { isSignedIn: false } });
   history.push("/login");
+  return { type: USER_LOGOUT, payload: { isSignedIn: false } };
 };
