@@ -1,11 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getLessonList } from "../../actions/lessons";
+import { getLessonList, sendPaymentReminders } from "../../actions/lessons";
 import { getStudent } from "../../actions/students";
 import { Link } from "react-router-dom";
 import StudentShow from "../students/StudentShow";
 import { getTime, getReadableDate } from "../../helper";
 import LessonDeleteModal from "./LessonDeleteModal";
+import "../../styling/styles.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 
 class LessonList extends React.Component {
   componentDidMount() {
@@ -13,20 +16,34 @@ class LessonList extends React.Component {
     this.props.getLessonList(this.props.match.params.id);
   }
 
-  onClose = e => {
+  onClose = (e) => {
     this.props.onClose && this.props.onClose(e);
+  };
+
+  sendPaymentReminders = () => {
+    this.props.sendPaymentReminders(this.props.match.params.id);
   };
   render() {
     return (
       <div className="container">
+        <p className="text-danger">{this.props.errors}</p>
         <StudentShow student={this.props.student} />
         <br />
         <Link
           to={`/student/${this.props.match.params.id}/lessons/create`}
-          className="btn btn-primary btn-sm"
+          className="btn btn-outline-primary btn-sm"
+          style={this.buttonStyle}
         >
+          <FontAwesomeIcon icon={faPlus} className="icon-padded" />
           Add Lesson
         </Link>
+        <button
+          className="btn btn-sm btn-success float-right"
+          onClick={this.sendPaymentReminders}
+        >
+          <FontAwesomeIcon icon={faMoneyBill} className="icon-padded" />
+          Send Payment Reminder
+        </button>
         <br />
         <br />
         <h5>Lessons{` (${this.props.lessons.length})`}</h5>
@@ -44,7 +61,7 @@ class LessonList extends React.Component {
           </thead>
 
           <tbody>
-            {this.props.lessons.map(lesson => (
+            {this.props.lessons.map((lesson) => (
               <tr key={lesson.id}>
                 <td>{getReadableDate(lesson.day)}</td>
                 <td>{getTime(lesson.time)}</td>
@@ -87,10 +104,13 @@ class LessonList extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    errors: state.errors.paymentReminderError,
     lessons: Object.values(state.lessons),
-    student: state.students[ownProps.match.params.id]
+    student: state.students[ownProps.match.params.id],
   };
 };
-export default connect(mapStateToProps, { getLessonList, getStudent })(
-  LessonList
-);
+export default connect(mapStateToProps, {
+  getLessonList,
+  getStudent,
+  sendPaymentReminders,
+})(LessonList);

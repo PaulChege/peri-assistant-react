@@ -5,7 +5,8 @@ import {
   STUDENT_LESSONS_UPDATE_FAILED,
   USER_LOGIN_FAILED,
   USER_CREATE_FAILED,
-  USER_EDIT_FAILED
+  USER_EDIT_FAILED,
+  STUDENT_LESSONS_REMINDERS_FAILED,
 } from "../actions/types";
 
 export default (state = {}, action) => {
@@ -24,6 +25,8 @@ export default (state = {}, action) => {
       return { ...state, lessonCreateError: action.payload };
     case STUDENT_LESSONS_UPDATE_FAILED:
       return { ...state, lessonUpdateError: action.payload };
+    case STUDENT_LESSONS_REMINDERS_FAILED:
+      return { ...state, paymentReminderError: action.payload };
     default:
       return state;
   }

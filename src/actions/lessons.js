@@ -8,6 +8,7 @@ import {
   STUDENT_LESSONS_SHOW,
   STUDENT_LESSONS_DELETE,
   FLASH_SUCCESS,
+  STUDENT_LESSONS_REMINDERS_FAILED,
 } from "./types";
 import { logout, getToken } from "../auth/auth";
 import history from "../history";
@@ -100,5 +101,24 @@ export const deleteLesson = (studentId, lessonId) => async (dispatch) => {
     if (error.response.status === 401) {
       logout(dispatch);
     }
+  }
+};
+
+export const sendPaymentReminders = (studentId) => async (dispatch) => {
+  try {
+    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
+    await periAssistantApi.post(
+      `/students/${studentId}/send_payment_reminders`
+    );
+    dispatch({
+      type: FLASH_SUCCESS,
+      payload: "Payment reminders sent!",
+    });
+    history.push(`/student/${studentId}/lessons`);
+  } catch (error) {
+    dispatch({
+      type: STUDENT_LESSONS_REMINDERS_FAILED,
+      payload: error.response.data.message,
+    });
   }
 };
