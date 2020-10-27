@@ -4,9 +4,10 @@ import { connect } from "react-redux";
 import { loginUser, googleLoginUser } from "../actions/users";
 import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "./LoadingIndicator";
-import { GoogleLogin} from "react-google-login";
+import { GoogleLogin } from "react-google-login";
 
-const CLIENT_ID = "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
+const CLIENT_ID =
+  "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
 
 class LogIn extends React.Component {
   onSubmit = (formValues) => {
@@ -27,7 +28,6 @@ class LogIn extends React.Component {
   }
   handleLoginFailure(response) {
     console.log(response);
-    // alert("Failed to log in");
   }
   login = (response) => {
     this.props.googleLoginUser({
@@ -35,14 +35,15 @@ class LogIn extends React.Component {
       name: response.profileObj.name,
       email: response.profileObj.email,
       image_url: response.profileObj.imageUrl,
-    })
-  }
+    });
+  };
 
   render() {
     return (
-      <div className="col-sm-4 mx-auto">
+      <div className="col-sm-3 mx-auto">
         <br />
-        <h3>Log In</h3>
+        <h3 className="text-center">Log In</h3>
+        <br />
         <p className="text-danger">{this.props.errors}</p>
         <form id="loginForm" onSubmit={this.props.handleSubmit(this.onSubmit)}>
           <Field
@@ -55,18 +56,25 @@ class LogIn extends React.Component {
               this.renderForm(input, "Password", "password")
             }
           />
-          <button className="btn btn-primary">Log In</button>
-          <LoadingIndicator />
+          <div className="text-center">
+            <button className="btn btn-primary col-sm-4">Log In</button>
+          </div>
+
+          <div className="text-center">
+            <LoadingIndicator />
+          </div>
         </form>
         <br />
-        <GoogleLogin
-          clientId={CLIENT_ID}
-          buttonText="Sign in with Google"
-          onSuccess={this.login}
-          onFailure={this.handleLoginFailure}
-          cookiePolicy={"single_host_origin"}
-          responseType="code,token"
-        />
+        <div className="text-center">
+          <GoogleLogin
+            clientId={CLIENT_ID}
+            buttonText="Sign in with Google"
+            onSuccess={this.login}
+            onFailure={this.handleLoginFailure}
+            cookiePolicy={"single_host_origin"}
+            responseType="code,token"
+          />
+        </div>
       </div>
     );
   }
