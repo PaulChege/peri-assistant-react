@@ -16,15 +16,11 @@
     "popper.js": "^1.16.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-google-auth": "^0.4.1",
-    "react-google-login": "^5.2.2",
-    "react-loader-spinner": "^6.1.6",
     "react-promise-tracker": "^2.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
     "react-scripts": "^5.0.1",
     "redux": "^5.0.1",
-    "redux-form": "^8.3.10",
     "redux-mock-store": "^1.5.5",
     "redux-thunk": "^3.1.0"
   },
@@ -53,8 +49,6 @@
     "node": "12.13.0"
   },
   "devDependencies": {
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.8",
     "prettier": "^3.6.2",
     "react-test-renderer": "^19.1.0"
   }
