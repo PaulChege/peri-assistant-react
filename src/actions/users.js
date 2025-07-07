@@ -1,13 +1,16 @@
 import periAssistantApi from "../api/periAssistantApi";
-import history from "../history";
 import {
   USER_CREATE,
   USER_CREATE_FAILED,
+  USER_CREATE_SUCCESS,
+  USER_CREATE_CLEAR,
   USER_LOGIN,
   USER_LOGIN_GOOGLE,
   USER_LOGIN_FAILED,
   USER_EDIT,
   USER_EDIT_FAILED,
+  USER_EDIT_SUCCESS,
+  USER_EDIT_CLEAR,
   USER_SHOW,
   USER_DELETE
 } from "./types";
@@ -23,7 +26,7 @@ export const createUser = formValues => async dispatch => {
       type: USER_CREATE,
       payload: { ...response.data.user, token: response.data.token }
     });
-    history.push("/");
+    dispatch({ type: USER_CREATE_SUCCESS });
   } catch (error) {
     dispatch({
       type: USER_CREATE_FAILED,
@@ -31,6 +34,8 @@ export const createUser = formValues => async dispatch => {
     });
   }
 };
+
+export const clearUserCreateSuccess = () => ({ type: USER_CREATE_CLEAR });
 
 export const loginUser = formValues => async dispatch => {
   try {
@@ -40,7 +45,6 @@ export const loginUser = formValues => async dispatch => {
       type: USER_LOGIN,
       payload: { ...response.data.user, token: response.data.token }
     });
-    history.push("/");
   } catch (error) {
     // TODO - Handle Network Errors
     dispatch({
@@ -50,8 +54,6 @@ export const loginUser = formValues => async dispatch => {
   }
 };
 
-
-
 export const googleLoginUser = formValues => async dispatch => {
   try {
     const response = await periAssistantApi.post("/auth/login_google", formValues);
@@ -60,7 +62,6 @@ export const googleLoginUser = formValues => async dispatch => {
       type: USER_LOGIN_GOOGLE,
       payload: { ...response.data.user, token: response.data.token }
     });
-    history.push("/");
   } catch (error) {
     // TODO - Handle Network Errors
     dispatch({
@@ -72,7 +73,6 @@ export const googleLoginUser = formValues => async dispatch => {
 
 export const updateUser = formValues => async dispatch => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.put(`/user`, {
       user: formValues
     });
@@ -91,7 +91,6 @@ export const updateUser = formValues => async dispatch => {
 
 export const getUser = () => async dispatch => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(`/user`);
     dispatch({
       type: USER_SHOW,
@@ -106,12 +105,10 @@ export const getUser = () => async dispatch => {
 
 export const deleteUser = () => async dispatch => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     await periAssistantApi.delete(`/user`);
     dispatch({
       type: USER_DELETE
     });
-    history.push("/login");
     window.location.reload();
   } catch (error) {
     if (error.response.status === 401) {
@@ -119,3 +116,5 @@ export const deleteUser = () => async dispatch => {
     }
   }
 };
+
+export const clearUserEditSuccess = () => ({ type: USER_EDIT_CLEAR });

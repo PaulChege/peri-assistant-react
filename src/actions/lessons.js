@@ -3,19 +3,21 @@ import {
   STUDENT_LESSONS_LIST,
   STUDENT_LESSONS_CREATE,
   STUDENT_LESSONS_CREATE_FAILED,
+  STUDENT_LESSONS_CREATE_SUCCESS,
+  STUDENT_LESSONS_CREATE_CLEAR,
   STUDENT_LESSONS_UPDATE,
   STUDENT_LESSONS_UPDATE_FAILED,
+  STUDENT_LESSONS_UPDATE_SUCCESS,
+  STUDENT_LESSONS_UPDATE_CLEAR,
   STUDENT_LESSONS_SHOW,
   STUDENT_LESSONS_DELETE,
   FLASH_SUCCESS,
   STUDENT_LESSONS_REMINDERS_FAILED,
 } from "./types";
 import { logout, getToken } from "../auth/auth";
-import history from "../history";
 
 export const getLessonList = (student_id) => async (dispatch) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(
       `/students/${student_id}/lessons`
     );
@@ -29,17 +31,16 @@ export const getLessonList = (student_id) => async (dispatch) => {
 
 export const createLesson = (studentId, formValues) => async (dispatch) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.post(
       `/students/${studentId}/lessons`,
       { lesson: formValues }
     );
     dispatch({ type: STUDENT_LESSONS_CREATE, payload: response.data });
+    dispatch({ type: STUDENT_LESSONS_CREATE_SUCCESS });
     dispatch({
       type: FLASH_SUCCESS,
       payload: "Lesson creation successful!",
     });
-    history.push(`/student/${studentId}/lessons`);
   } catch (error) {
     dispatch({
       type: STUDENT_LESSONS_CREATE_FAILED,
@@ -48,9 +49,10 @@ export const createLesson = (studentId, formValues) => async (dispatch) => {
   }
 };
 
+export const clearLessonCreateSuccess = () => ({ type: STUDENT_LESSONS_CREATE_CLEAR });
+
 export const getLesson = (studentId, lessonId) => async (dispatch) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.get(
       `/students/${studentId}/lessons/${lessonId}`
     );
@@ -66,7 +68,6 @@ export const updateLesson = (studentId, lessonId, formValues) => async (
   dispatch
 ) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     const response = await periAssistantApi.put(
       `/students/${studentId}/lessons/${lessonId}`,
       {
@@ -74,11 +75,11 @@ export const updateLesson = (studentId, lessonId, formValues) => async (
       }
     );
     dispatch({ type: STUDENT_LESSONS_UPDATE, payload: response.data });
+    dispatch({ type: STUDENT_LESSONS_UPDATE_SUCCESS });
     dispatch({
       type: FLASH_SUCCESS,
       payload: "Lesson update successful!",
     });
-    history.push(`/student/${studentId}/lessons`);
   } catch (error) {
     dispatch({
       type: STUDENT_LESSONS_UPDATE_FAILED,
@@ -87,9 +88,10 @@ export const updateLesson = (studentId, lessonId, formValues) => async (
   }
 };
 
+export const clearLessonUpdateSuccess = () => ({ type: STUDENT_LESSONS_UPDATE_CLEAR });
+
 export const deleteLesson = (studentId, lessonId) => async (dispatch) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     await periAssistantApi.delete(`/students/${studentId}/lessons/${lessonId}`);
     dispatch({ type: STUDENT_LESSONS_DELETE, payload: lessonId });
     dispatch({
@@ -106,7 +108,6 @@ export const deleteLesson = (studentId, lessonId) => async (dispatch) => {
 
 export const sendPaymentReminders = (studentId) => async (dispatch) => {
   try {
-    periAssistantApi.defaults.headers.common["Authorization"] = getToken();
     await periAssistantApi.post(
       `/students/${studentId}/send_payment_reminders`
     );
@@ -114,7 +115,6 @@ export const sendPaymentReminders = (studentId) => async (dispatch) => {
       type: FLASH_SUCCESS,
       payload: "Payment reminders sent!",
     });
-    history.push(`/student/${studentId}/lessons`);
   } catch (error) {
     dispatch({
       type: STUDENT_LESSONS_REMINDERS_FAILED,

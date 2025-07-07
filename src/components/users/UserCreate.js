@@ -1,86 +1,101 @@
-import React from "react";
-import { Field, reduxForm } from "redux-form";
-import { connect } from "react-redux";
-import { createUser, googleLoginUser } from "../../actions/users";
+import React, { useEffect, useCallback } from "react";
+import { Field, Form } from "react-final-form";
+import { connect, useSelector } from "react-redux";
+import { createUser, googleLoginUser, clearUserCreateSuccess } from "../../actions/users";
 import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "../LoadingIndicator";
-import { GoogleLogin } from "react-google-login";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const CLIENT_ID =
   "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
 
-class UserCreate extends React.Component {
-  onSubmit = (formValues) => {
-    trackPromise(this.props.createUser(formValues));
+function UserCreate({ createUser, googleLoginUser, clearUserCreateSuccess, errors }) {
+  const navigate = useNavigate();
+  const userCreated = useSelector(state => state.user.userCreated);
+
+  useEffect(() => {
+    clearUserCreateSuccess(); // Clear flag on mount
+    return () => clearUserCreateSuccess(); // Clear flag on unmount
+  }, [clearUserCreateSuccess]);
+
+  useEffect(() => {
+    if (userCreated) {
+      navigate("/");
+    }
+  }, [userCreated, navigate]);
+
+  const onSubmit = useCallback(async (formValues) => {
+    await trackPromise(createUser(formValues));
+  }, [createUser]);
+
+  const renderForm = (input, placeholder, type = "") => (
+    <div className="form-group">
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className="form-control"
+      />
+    </div>
+  );
+
+  const handleLoginFailure = (response) => {
+    console.log(response);
   };
 
-  renderForm(input, placeholder, type = "") {
-    return (
-      <div className="form-group">
-        <input
-          {...input}
-          placeholder={placeholder}
-          type={type}
-          className="form-control"
-        />
-      </div>
-    );
-  }
-
-  handleLoginFailure(response) {
-    console.log(response);
-  }
-  login = (response) => {
-    this.props.googleLoginUser({
-      google_id: response.profileObj.googleId,
-      name: response.profileObj.name,
-      email: response.profileObj.email,
-      image_url: response.profileObj.imageUrl,
+  const login = (response) => {
+    const decoded = jwtDecode(response.credential);
+    googleLoginUser({
+      google_id: decoded.sub,
+      name: decoded.name,
+      email: decoded.email,
+      image_url: decoded.picture,
     });
   };
-  render() {
-    return (
-      <div className="col-sm-3 mx-auto">
-        <br />
-        <h3 className="text-center">Sign Up</h3>
-        <p className="text-danger">{this.props.errors}</p>
-        <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
-          <Field
-            name="name"
-            component={({ input }) => this.renderForm(input, "Name")}
-          />
-          <Field
-            name="email"
-            component={({ input }) => this.renderForm(input, "Email", "email")}
-          />
-          <Field
-            name="password"
-            component={({ input }) =>
-              this.renderForm(input, "Password", "password")
-            }
-          />
-          <div className="text-center">
-            {" "}
-            <button className="btn btn-primary">Sign Up</button>
-          </div>
-          <div className="text-center">
-            <LoadingIndicator />
-          </div>
-          <br />
-          <div className="text-center">
-            <GoogleLogin
-              clientId={CLIENT_ID}
-              buttonText="Sign Up with Google"
-              onSuccess={this.login}
-              onFailure={this.handleLoginFailure}
-              cookiePolicy={"single_host_origin"}
-              responseType="code,token"
+
+  return (
+    <div className="col-sm-3 mx-auto">
+      <br />
+      <h3 className="text-center">Sign Up</h3>
+      <p className="text-danger">{errors}</p>
+      <Form
+        onSubmit={onSubmit}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <Field
+              name="name"
+              render={({ input }) => renderForm(input, "Name")}
             />
-          </div>
-        </form>
-      </div>
-    );
-  }
+            <Field
+              name="email"
+              render={({ input }) => renderForm(input, "Email", "email")}
+            />
+            <Field
+              name="password"
+              render={({ input }) =>
+                renderForm(input, "Password", "password")
+              }
+            />
+            <div className="text-center">
+              <button className="btn btn-primary">Sign Up</button>
+            </div>
+            <div className="text-center">
+              <LoadingIndicator />
+            </div>
+            <br />
+            <div className="text-center">
+              <GoogleLogin
+                onSuccess={login}
+                onError={handleLoginFailure}
+              />
+            </div>
+          </form>
+        )}
+      />
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => {
@@ -89,6 +104,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { createUser, googleLoginUser })(
-  reduxForm({ form: "userCreateForm" })(UserCreate)
-);
+export default connect(mapStateToProps, { createUser, googleLoginUser, clearUserCreateSuccess })(UserCreate);

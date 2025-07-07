@@ -101,7 +101,6 @@ const StudentShow = ({ student }) => {
       </div>
     );
   }
-  return <div>Loading...</div>;
 };
 
 export default StudentShow;

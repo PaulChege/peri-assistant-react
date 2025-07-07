@@ -1,27 +1,40 @@
-import React from "react";
-import { connect } from "react-redux";
-import { createStudent } from "../../actions/students";
+import React, { useCallback, useEffect } from "react";
+import { connect, useSelector } from "react-redux";
+import { createStudent, clearStudentCreateSuccess } from "../../actions/students";
 import { getInstrumentList } from "../../actions/instruments";
 import StudentForm from "../../components/students/StudentForm";
 import { trackPromise } from "react-promise-tracker";
+import { useNavigate } from "react-router-dom";
 
-class StudentCreate extends React.Component {
-  componentDidMount() {
-    this.props.getInstrumentList();
-  }
-  onSubmit = formValues => {
-    trackPromise(this.props.createStudent(formValues));
-  };
-  render() {
-    return (
-      <StudentForm
-        title="Add Student"
-        onSubmit={this.onSubmit}
-        errors={this.props.errors}
-        instrumentList={this.props.instrumentList}
-      />
-    );
-  }
+function StudentCreate({ createStudent, getInstrumentList, clearStudentCreateSuccess, errors, instrumentList }) {
+  const navigate = useNavigate();
+  const studentCreated = useSelector(state => state.students.studentCreated);
+
+  useEffect(() => {
+    getInstrumentList();
+    clearStudentCreateSuccess(); // Clear flag on mount
+    return () => clearStudentCreateSuccess(); // Clear flag on unmount
+  }, [getInstrumentList, clearStudentCreateSuccess]);
+
+  useEffect(() => {
+    if (studentCreated) {
+      navigate("/");
+    }
+  }, [studentCreated, navigate]);
+
+  const onSubmit = useCallback(async (formValues) => {
+    await trackPromise(createStudent(formValues));
+    // Do not navigate here!
+  }, [createStudent]);
+
+  return (
+    <StudentForm
+      title="Add Student"
+      onSubmit={onSubmit}
+      errors={errors}
+      instrumentList={instrumentList}
+    />
+  );
 }
 
 const mapStateToProps = state => {
@@ -32,5 +45,6 @@ const mapStateToProps = state => {
 };
 export default connect(mapStateToProps, {
   createStudent,
-  getInstrumentList
+  getInstrumentList,
+  clearStudentCreateSuccess
 })(StudentCreate);

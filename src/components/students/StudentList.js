@@ -9,7 +9,7 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import "../../styling/styles.css";
-import { Field, reduxForm } from "redux-form";
+import { Field, Form } from "react-final-form";
 
 class StudentList extends React.Component {
   componentDidMount() {
@@ -18,23 +18,22 @@ class StudentList extends React.Component {
 
   renderSerchForm() {
     return (
-      <div>
-        <form
-          onSubmit={this.props.handleSubmit((formValues) =>
-            this.props.getStudentList(formValues.search)
-          )}
-        >
-          <div className="row">
-            <div className="col-sm-6">
-              <Field name="search" component="input" type="text" />
-              <button className="btn btn-sm btn-primary">
-                <FontAwesomeIcon icon={faSearch} className="icon-padded" />
-                Search
-              </button>
+      <Form
+        onSubmit={({ search }) => this.props.getStudentList(search)}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <div className="col-sm-6">
+                <Field name="search" component="input" type="text" />
+                <button className="btn btn-sm btn-primary">
+                  <FontAwesomeIcon icon={faSearch} className="icon-padded" />
+                  Search
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        )}
+      />
     );
   }
 
@@ -91,9 +90,9 @@ class StudentList extends React.Component {
 }
 const mapStateToProps = (state) => {
   return {
-    students: Object.values(state.students),
+    students: Object.values(state.students).filter(student => student && student.id !== undefined),
   };
 };
 
 StudentList = connect(mapStateToProps, { getStudentList })(StudentList);
-export default reduxForm({ form: "searchForm" })(StudentList);
+export default StudentList;

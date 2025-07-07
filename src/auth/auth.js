@@ -1,5 +1,4 @@
 import { USER_LOGOUT } from "../actions/types";
-import history from "../history";
 
 export const getToken = () => {
   return localStorage.getItem("token");
@@ -15,6 +14,5 @@ export const removeToken = () => {
 
 export const logout = () => {
   removeToken();
-  history.push("/login");
   return { type: USER_LOGOUT, payload: { isSignedIn: false } };
 };

@@ -1,47 +1,44 @@
 import React from "react";
 import Modal from "../Modal";
-import history from "../../history";
 import { connect } from "react-redux";
 import { deleteUser } from "../../actions/users";
+import { useNavigate } from "react-router-dom";
 
-class UserDeleteModal extends React.Component {
-  renderActions() {
-    return (
-      <React.Fragment>
-        <button
-          onClick={() => {
-            this.props.deleteUser();
-          }}
-          className="btn btn-danger"
-        >
-          Delete
-        </button>
-        <button
-          // TODO - Find better way to close modal other than reloading
-          onClick={() => window.location.reload()}
-          className="btn btn-primary"
-        >
-          Cancel
-        </button>
-      </React.Fragment>
-    );
-  }
+function UserDeleteModal(props) {
+  const navigate = useNavigate();
+  const { deleteUser } = props;
 
-  render() {
-    return (
-      <div>
-        <Modal
-          title="Delete Student"
-          content="Are you sure you want to delete your account?"
-          actions={this.renderActions()}
-          id="userDeleteModal"
-          onDismiss={() => {
-            history.push(`/user`);
-          }}
-        />
-      </div>
-    );
-  }
+  const handleDelete = () => {
+    deleteUser();
+    navigate("/user");
+  };
+
+  const handleDismiss = () => {
+    navigate("/user");
+  };
+
+  const renderActions = () => (
+    <>
+      <button onClick={handleDelete} className="btn btn-danger">
+        Delete
+      </button>
+      <button onClick={handleDismiss} className="btn btn-primary">
+        Cancel
+      </button>
+    </>
+  );
+
+  return (
+    <div>
+      <Modal
+        title="Delete Student"
+        content="Are you sure you want to delete your account?"
+        actions={renderActions()}
+        id="userDeleteModal"
+        onDismiss={handleDismiss}
+      />
+    </div>
+  );
 }
 
 export default connect(null, { deleteUser })(UserDeleteModal);

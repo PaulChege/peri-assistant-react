@@ -1,5 +1,5 @@
-import React from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./LogIn";
 import UserCreate from "./users/UserCreate";
 import UserEdit from "./users/UserEdit";
@@ -9,63 +9,67 @@ import StudentEdit from "./students/StudentEdit";
 import LessonList from "./lessons/LessonList";
 import LessonCreate from "./lessons/LessonCreate";
 import LessonEdit from "./lessons/LessonEdit";
-import history from "../history";
 import Header from "./Header";
 import { getToken } from "../auth/auth";
 import { connect } from "react-redux";
 import { clearFlash } from "../actions/flash";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
-class App extends React.Component {
-  componentDidMount() {
+function App({ flash, clearFlash }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
     const token = getToken();
     if (token == null) {
-      history.push("/login");
+      navigate("/login");
     }
-  }
+    // eslint-disable-next-line
+  }, []);
 
-  clearFlash = () => {
-    setTimeout(() => this.props.clearFlash(), 5000);
-  };
+  useEffect(() => {
+    if (flash) {
+      const timer = setTimeout(() => clearFlash(), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [flash, clearFlash]);
 
-  render() {
-    return (
-      <div>
-        <Router history={history}>
-          <Header />
-          {this.props.flash && (
-            <div className="alert alert-success" role="alert">
-              <p>{this.props.flash}</p>
-            </div>
-          )}
-
-          {this.clearFlash()}
-          <Switch>
-            <Route path="/" exact component={StudentList} />
-            <Route path="/login" exact component={Login} />
-            <Route path="/signup" exact component={UserCreate} />
-            <Route path="/user" exact component={UserEdit} />
-            <Route path="/student/create" exact component={StudentCreate} />
-            <Route path="/student/:id/edit" exact component={StudentEdit} />
-            <Route path="/student/:id/lessons" exact component={LessonList} />
-            <Route
-              path="/student/:id/lessons/create"
-              exact
-              component={LessonCreate}
-            />
-            <Route
-              path="/student/:studentId/lesson/:id/edit"
-              exact
-              component={LessonEdit}
-            />
-          </Switch>
-        </Router>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Header />
+      {flash && (
+        <div className="alert alert-success" role="alert">
+          <p>{flash}</p>
+        </div>
+      )}
+      <Routes>
+        <Route path="/" element={<StudentList />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<UserCreate />} />
+        <Route path="/user" element={<UserEdit />} />
+        <Route path="/student/create" element={<StudentCreate />} />
+        <Route path="/student/:id/edit" element={<StudentEdit />} />
+        <Route path="/student/:id/lessons" element={<LessonList />} />
+        <Route path="/student/:id/lessons/create" element={<LessonCreate />} />
+        <Route path="/student/:studentId/lesson/:id/edit" element={<LessonEdit />} />
+      </Routes>
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => {
   return { flash: state.flash.message };
 };
 
-export default connect(mapStateToProps, { clearFlash })(App);
+const ConnectedApp = connect(mapStateToProps, { clearFlash })(App);
+
+const CLIENT_ID = "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
+
+export default function AppWithRouter() {
+  return (
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
+      <BrowserRouter>
+        <ConnectedApp />
+      </BrowserRouter>
+    </GoogleOAuthProvider>
+  );
+}

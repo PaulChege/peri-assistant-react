@@ -1,59 +1,57 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "../Modal";
-import history from "../../history";
 import { connect } from "react-redux";
 import { getStudent, deleteStudent } from "../../actions/students";
+import { useNavigate } from "react-router-dom";
 
-class StudentDeleteModal extends React.Component {
-  componentDidMount() {
-    this.props.getStudent(this.props.student.id);
-  }
-  renderActions() {
-    const { id } = this.props.student;
-    return (
-      <React.Fragment>
-        <button
-          onClick={() => {
-            this.props.deleteStudent(id);
-          }}
-          className="btn btn-danger"
-        >
-          Delete
-        </button>
-        <button
-          // TODO - Find better way to close modal other than reloading
-          onClick={() => window.location.reload()}
-          className="btn btn-primary"
-        >
-          Cancel
-        </button>
-      </React.Fragment>
-    );
-  }
+function StudentDeleteModal(props) {
+  const navigate = useNavigate();
+  const { student, getStudent, deleteStudent } = props;
 
-  renderContent() {
-    if (!this.props.student) {
+  useEffect(() => {
+    getStudent(student.id);
+    // eslint-disable-next-line
+  }, [getStudent, student.id]);
+
+  const handleDelete = () => {
+    deleteStudent(student.id);
+    navigate(`/student/${student.id}/lessons`);
+  };
+
+  const handleDismiss = () => {
+    navigate(`/student/${student.id}/lessons`);
+  };
+
+  const renderActions = () => (
+    <>
+      <button onClick={handleDelete} className="btn btn-danger">
+        Delete
+      </button>
+      <button onClick={handleDismiss} className="btn btn-primary">
+        Cancel
+      </button>
+    </>
+  );
+
+  const renderContent = () => {
+    if (!student) {
       return "Are you sure you want to delete?";
     } else {
-      return `Are you sure you want to delete the student: ${this.props.student.name}?`;
+      return `Are you sure you want to delete the student: ${student.name}?`;
     }
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <Modal
-          title="Delete Student"
-          content={this.renderContent()}
-          actions={this.renderActions()}
-          id="studentDeleteModal"
-          onDismiss={() => {
-            history.push(`/student/${this.props.student.id}/lessons`);
-          }}
-        />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Modal
+        title="Delete Student"
+        content={renderContent()}
+        actions={renderActions()}
+        id="studentDeleteModal"
+        onDismiss={handleDismiss}
+      />
+    </div>
+  );
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -62,6 +60,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps, { getStudent, deleteStudent })(
-  StudentDeleteModal
-);
+export default connect(mapStateToProps, { getStudent, deleteStudent })(StudentDeleteModal);
