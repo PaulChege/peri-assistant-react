@@ -1,8 +1,99 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Field, Form } from "react-final-form";
 import LoadingIndicator from "../LoadingIndicator";
+import periAssistantApi from "../../api/periAssistantApi";
+
+function InstitutionAutocomplete({ input, disabled, ...rest }) {
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const timeoutRef = useRef();
+
+  const fetchSuggestions = async (query) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await periAssistantApi.get(`/institutions/search?q=${encodeURIComponent(query)}`);
+      setSuggestions(Array.isArray(response.data) ? response.data : (response.data.results || []));
+    } catch (e) {
+      setSuggestions([]);
+    }
+    setLoading(false);
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    input.onChange(value);
+    setShowDropdown(true);
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  const handleSelect = (suggestion) => {
+    input.onChange(suggestion);
+    setShowDropdown(false);
+    setSuggestions([]);
+  };
+
+  return (
+    <div className="form-group" style={{ position: "relative" }}>
+      <input
+        {...input}
+        {...rest}
+        value={input.value}
+        onChange={handleChange}
+        placeholder="Institution"
+        className="form-control"
+        autoComplete="off"
+        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        onFocus={() => input.value && setShowDropdown(true)}
+        disabled={disabled}
+      />
+      {loading && <div>Loading...</div>}
+      {showDropdown && suggestions.length > 0 && !disabled && (
+        <ul className="list-group" style={{ position: "absolute", zIndex: 1000, width: "100%" }}>
+          {suggestions.map((suggestion, idx) => (
+            <li
+              key={idx}
+              className="list-group-item list-group-item-action"
+              onClick={() => handleSelect(suggestion)}
+              style={{ cursor: "pointer" }}
+            >
+              {suggestion}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 class StudentForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      homeLessons: false,
+    };
+  }
+
+  handleHomeLessonsChange = (e, input) => {
+    const checked = e.target.checked;
+    this.setState({ homeLessons: checked }, () => {
+      if (checked) {
+        // Set institution to 'Home' when checked
+        input.onChange('Home');
+      } else {
+        // Clear institution when unchecked
+        input.onChange('');
+      }
+    });
+  };
+
   renderForm(input, placeholder, type = "") {
     return (
       <div className="form-group">
@@ -16,6 +107,15 @@ class StudentForm extends React.Component {
     );
   }
 
+  handleSubmit = (values) => {
+    // Always send institution as 'Home' if homeLessons is checked
+    const submitValues = {
+      ...values,
+      institution: this.state.homeLessons ? 'Home' : values.institution,
+    };
+    this.props.onSubmit(submitValues);
+  };
+
   render() {
     return (
       <div className="container">
@@ -24,9 +124,9 @@ class StudentForm extends React.Component {
         <h5>{this.props.title}</h5>
         <p className="text-danger">{this.props.errors}</p>
         <Form
-          onSubmit={this.props.onSubmit}
+          onSubmit={this.handleSubmit}
           initialValues={this.props.initialValues}
-          render={({ handleSubmit }) => (
+          render={({ handleSubmit, values }) => (
             <form onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-sm-6">
@@ -46,16 +146,38 @@ class StudentForm extends React.Component {
                       this.renderForm(input, "Mobile Number")
                     }
                   />
+                  {/* Home Lessons Checkbox */}
+                  <Field
+                    name="homeLessons"
+                    type="checkbox"
+                    render={({ input }) => (
+                      <div className="form-group form-check">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="homeLessonsCheckbox"
+                          checked={this.state.homeLessons}
+                          onChange={e => this.handleHomeLessonsChange(e, input)}
+                        />
+                        <label className="form-check-label" htmlFor="homeLessonsCheckbox">
+                          Home Lessons
+                        </label>
+                      </div>
+                    )}
+                  />
+                  {/* Institution Autocomplete Field (backend) */}
                   <Field
                     name="institution"
-                    render={({ input }) => this.renderForm(input, "Institution")}
+                    render={({ input }) => (
+                      <InstitutionAutocomplete input={input} disabled={this.state.homeLessons} />
+                    )}
                   />
-                  <label>Instrument:</label>
                   <Field
                     name="instrument"
                     render={({ input }) => {
                       return (
                         <div className="form-group">
+                          <label>Instrument:</label>
                           <select {...input} className="form-control">
                             <option></option>
                             {this.props.instrumentList.map((instrument, index) => (
