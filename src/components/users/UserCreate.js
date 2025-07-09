@@ -26,8 +26,26 @@ function UserCreate({ createUser, googleLoginUser, clearUserCreateSuccess, error
     }
   }, [userCreated, navigate]);
 
+  // Helper to fetch IP with timeout
+  const fetchIpWithTimeout = () => {
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(null), 10000);
+      fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => {
+          clearTimeout(timeout);
+          resolve(data.ip || null);
+        })
+        .catch(() => {
+          clearTimeout(timeout);
+          resolve(null);
+        });
+    });
+  };
+
   const onSubmit = useCallback(async (formValues) => {
-    await trackPromise(createUser(formValues));
+    const ip = await fetchIpWithTimeout();
+    await trackPromise(createUser({ ...formValues, ip_address: ip }));
   }, [createUser]);
 
   const renderForm = (input, placeholder, type = "") => (
@@ -45,14 +63,16 @@ function UserCreate({ createUser, googleLoginUser, clearUserCreateSuccess, error
     console.log(response);
   };
 
-  const login = (response) => {
+  const login = async (response) => {
     const decoded = jwtDecode(response.credential);
-    googleLoginUser({
+    const ip = await fetchIpWithTimeout();
+    await trackPromise(googleLoginUser({
       google_id: decoded.sub,
       name: decoded.name,
       email: decoded.email,
       image_url: decoded.picture,
-    });
+      ip_address: ip,
+    }));
   };
 
   return (
@@ -87,7 +107,7 @@ function UserCreate({ createUser, googleLoginUser, clearUserCreateSuccess, error
             <br />
             <div className="text-center">
               <GoogleLogin
-                onSuccess={login}
+                onSuccess={async (response) => { await login(response); }}
                 onError={handleLoginFailure}
               />
             </div>

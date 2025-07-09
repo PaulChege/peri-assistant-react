@@ -40,13 +40,32 @@ function LogIn(props) {
     console.log(response);
   };
 
-  const login = (response) => {
+  // Helper to fetch IP with timeout
+  const fetchIpWithTimeout = () => {
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => resolve(null), 10000);
+      fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => {
+          clearTimeout(timeout);
+          resolve(data.ip || null);
+        })
+        .catch(() => {
+          clearTimeout(timeout);
+          resolve(null);
+        });
+    });
+  };
+
+  const login = async (response) => {
     const decoded = jwtDecode(response.credential);
+    const ip = await fetchIpWithTimeout();
     props.googleLoginUser({
       google_id: decoded.sub,
       name: decoded.name,
       email: decoded.email,
       image_url: decoded.picture,
+      ip_address: ip,
     });
   };
 
@@ -82,7 +101,7 @@ function LogIn(props) {
       <br />
       <div className="text-center">
         <GoogleLogin
-          onSuccess={login}
+          onSuccess={async (response) => { await login(response); }}
           onError={handleLoginFailure}
         />
       </div>

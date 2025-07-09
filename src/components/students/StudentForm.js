@@ -73,6 +73,72 @@ function InstitutionAutocomplete({ input, disabled, ...rest }) {
   );
 }
 
+function InstrumentDropdown({ input, instrumentList }) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef();
+
+  // Close dropdown on outside click
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleCheckboxChange = (e) => {
+    const value = e.target.value;
+    let newValue = Array.isArray(input.value) ? [...input.value] : [];
+    if (e.target.checked) {
+      if (!newValue.includes(value)) newValue.push(value);
+    } else {
+      newValue = newValue.filter(v => v !== value);
+    }
+    input.onChange(newValue);
+  };
+
+  const selected = Array.isArray(input.value) ? input.value : [];
+  const label = selected.length > 0 ? selected.join(", ") : "Select instrument(s)";
+
+  return (
+    <div className="form-group" ref={dropdownRef} style={{ position: "relative" }}>
+      <div
+        className="form-control"
+        style={{ cursor: "pointer", minHeight: 38, userSelect: "none" }}
+        onClick={() => setOpen((o) => !o)}
+        tabIndex={0}
+      >
+        {label}
+        <span style={{ float: "right" }}>&#9662;</span>
+      </div>
+      {open && (
+        <div
+          className="dropdown-menu show"
+          style={{ display: "block", position: "absolute", width: "100%", zIndex: 1000, maxHeight: 200, overflowY: "auto" }}
+        >
+          {instrumentList.map((instrument, index) => (
+            <label className="dropdown-item" key={index} style={{ cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                value={instrument}
+                checked={selected.includes(instrument)}
+                onChange={handleCheckboxChange}
+                style={{ marginRight: 8 }}
+                onClick={e => e.stopPropagation()}
+              />
+              {instrument}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 class StudentForm extends React.Component {
   constructor(props) {
     super(props);
@@ -96,7 +162,7 @@ class StudentForm extends React.Component {
 
   renderForm(input, placeholder, type = "") {
     return (
-      <div className="form-group">
+      <div className="form-group mb-3">
         <input
           {...input}
           placeholder={placeholder}
@@ -107,12 +173,95 @@ class StudentForm extends React.Component {
     );
   }
 
+  daysOfWeek = [
+    { value: 0, label: "Monday" },
+    { value: 1, label: "Tuesday" },
+    { value: 2, label: "Wednesday" },
+    { value: 3, label: "Thursday" },
+    { value: 4, label: "Friday" },
+    { value: 5, label: "Saturday" },
+    { value: 6, label: "Sunday" },
+  ];
+
+  renderScheduleFields = (values) => (
+    <div>
+      <hr className="mt-2 mb-4" />
+      <h6 className="mb-3">Schedule</h6>
+      <div className="row font-weight-bold mb-2">
+        <div className="col-1"></div>
+        <div className="col-2">Day</div>
+        <div className="col-4">Start Time</div>
+        <div className="col-4">Duration (min)</div>
+      </div>
+      {this.daysOfWeek.map((day) => {
+        const enabled = values.schedule && values.schedule[day.value] && values.schedule[day.value].enabled;
+        return (
+          <div className="row align-items-center mb-2" key={day.value}>
+            <div className="col-1 pr-0" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Field
+                name={`schedule[${day.value}].enabled`}
+                type="checkbox"
+                render={({ input }) => (
+                  <input type="checkbox" {...input} style={{ marginRight: 0 }} />
+                )}
+              />
+            </div>
+            <div className="col-2 pl-3">{day.label}</div>
+            <div className="col-4">
+              <Field
+                name={`schedule[${day.value}].start_time`}
+                render={({ input }) => (
+                  <input
+                    {...input}
+                    type="time"
+                    className="form-control"
+                    disabled={!enabled}
+                  />
+                )}
+              />
+            </div>
+            <div className="col-4">
+              <Field
+                name={`schedule[${day.value}].duration`}
+                render={({ input }) => (
+                  <input
+                    {...input}
+                    type="number"
+                    min="0"
+                    className="form-control"
+                    placeholder="min"
+                    disabled={!enabled}
+                  />
+                )}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   handleSubmit = (values) => {
-    // Always send institution as 'Home' if homeLessons is checked
+    // Transform schedule to array of enabled days
+    let scheduleArr = [];
+    if (values.schedule) {
+      scheduleArr = Object.entries(values.schedule)
+        .filter(([_, v]) => v && v.enabled)
+        .map(([dayIdx, v]) => ({
+          day: this.daysOfWeek[dayIdx]?.label,
+          start_time: v.start_time,
+          duration: v.duration
+        }));
+    }
     const submitValues = {
       ...values,
-      institution: this.state.homeLessons ? 'Home' : values.institution,
+      homeLessons: undefined,
+      institution: (this.state.homeLessons || values.homeLessons) ? 'Home' : values.institution,
+      instruments: Array.isArray(values.instruments) ? values.instruments.join(',') : values.instruments,
+      schedule: scheduleArr,
+      lesson_unit_charge: values.lesson_unit_charge,
     };
+    delete submitValues.homeLessons;
     this.props.onSubmit(submitValues);
   };
 
@@ -169,80 +318,59 @@ class StudentForm extends React.Component {
                   <Field
                     name="institution"
                     render={({ input }) => (
-                      <InstitutionAutocomplete input={input} disabled={this.state.homeLessons} />
+                      <div className="mb-4">
+                        <InstitutionAutocomplete input={input} disabled={this.state.homeLessons} />
+                      </div>
                     )}
                   />
                   <Field
-                    name="instrument"
-                    render={({ input }) => {
-                      return (
-                        <div className="form-group">
-                          <label>Instrument:</label>
-                          <select {...input} className="form-control">
-                            <option></option>
-                            {this.props.instrumentList.map((instrument, index) => (
-                              <option key={index} value={instrument}>
-                                {instrument}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      );
-                    }}
-                  />
-                  <label>Start Date: </label>
-                  <Field
-                    name="start_date"
-                    render={({ input }) => this.renderForm(input, "", "date")}
-                  />
-                  <label>Date of Birth: </label>
-                  <Field
-                    name="date_of_birth"
-                    render={({ input }) => this.renderForm(input, "", "date")}
-                  />
-                  <Field
-                    name="goals"
-                    render={({ input }) => this.renderForm(input, "Goals")}
+                    name="instruments"
+                    render={({ input }) => (
+                      <div className="mb-4">
+                        <InstrumentDropdown input={input} instrumentList={this.props.instrumentList} />
+                      </div>
+                    )}
                   />
                 </div>
+              </div>
+              <div className="row mt-4">
                 <div className="col-sm-6">
-                  <label>Usual Lesson Day: </label>
-                  <Field
-                    name="lesson_day"
-                    render={({ input }) => {
-                      return (
-                        <div className="form-group">
-                          <select className="form-control" {...input}>
-                            <option></option>
-                            <option value="0">Monday</option>
-                            <option value="1">Tuesday</option>
-                            <option value="2">Wednesday</option>
-                            <option value="3">Thurday</option>
-                            <option value="4">Friday</option>
-                            <option value="5">Saturday</option>
-                            <option value="6">Sunday</option>
-                          </select>
-                        </div>
-                      );
-                    }}
-                  />
-                  <label>Usual Lesson Time: </label>
-                  <Field
-                    name="lesson_time"
-                    render={({ input }) => this.renderForm(input, "", "time")}
-                  />
-
-                  <label>Usual Lesson Duration: </label>
-                  <Field
-                    name="lesson_duration"
-                    render={({ input }) => this.renderForm(input, "", "number")}
-                  />
-
-                  <label>Usual Lesson Charge: </label>
-                  <Field
-                    name="lesson_charge"
-                    render={({ input }) => this.renderForm(input, "", "number")}
-                  />
+                  {this.renderScheduleFields(values)}
+                </div>
+                <div className="col-sm-6"></div>
+              </div>
+              <div className="row">
+                <div className="col-sm-6">
+                  <hr className="mt-4 mb-3" />
+                </div>
+                <div className="col-sm-6"></div>
+              </div>
+              <div className="row mb-3 align-items-center">
+                <div className="col-sm-6">
+                  <div className="form-group mb-0 d-flex align-items-center">
+                    <label
+                      htmlFor="lesson_unit_charge"
+                      className="me-3 mb-0"
+                      style={{ minWidth: 130 }}
+                    >
+                      Charge per 30min:
+                    </label>
+                    <span className="me-3" style={{ minWidth: 40, display: 'inline-block', textAlign: 'center' }}>{(this.props.currentUser && this.props.currentUser.currency)}</span>
+                    <Field
+                      name="lesson_unit_charge"
+                      render={({ input }) => (
+                        <input
+                          {...input}
+                          id="lesson_unit_charge"
+                          type="number"
+                          min="0"
+                          className="form-control d-inline-block"
+                          style={{ width: 140 }}
+                          placeholder="Charge"
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
               <br />
