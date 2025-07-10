@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { Field, Form } from "react-final-form";
 import { connect, useSelector } from "react-redux";
 import { updateUser, getUser, clearUserEditSuccess } from "../../actions/users";
@@ -6,10 +6,15 @@ import UserDeleteModal from "../users/UserDeleteModal";
 import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "../LoadingIndicator";
 import { useNavigate } from "react-router-dom";
+import { countryList } from './countryList';
+import { currencyList } from './currencyList';
+import Select from 'react-select';
 
 function UserEdit({ updateUser, getUser, clearUserEditSuccess, initialValues, errors }) {
   const navigate = useNavigate();
   const userUpdated = useSelector(state => state.user.userUpdated);
+  const [country, setCountry] = useState(initialValues ? initialValues.country : '');
+  const [currency, setCurrency] = useState(initialValues ? initialValues.currency : '');
 
   useEffect(() => {
     getUser();
@@ -23,10 +28,20 @@ function UserEdit({ updateUser, getUser, clearUserEditSuccess, initialValues, er
     }
   }, [userUpdated, navigate]);
 
+  useEffect(() => {
+    setCountry(initialValues ? initialValues.country : '');
+    setCurrency(initialValues ? initialValues.currency : '');
+  }, [initialValues]);
+
   const onSubmit = useCallback(async (formValues) => {
-    await trackPromise(updateUser(formValues));
+    const updatedUser = {
+      ...formValues,
+      country,
+      currency,
+    };
+    await trackPromise(updateUser(updatedUser));
     // Do not navigate here!
-  }, [updateUser]);
+  }, [updateUser, country, currency]);
 
   const renderForm = (input, placeholder, type = "") => (
     <div className="form-group">
@@ -61,10 +76,34 @@ function UserEdit({ updateUser, getUser, clearUserEditSuccess, initialValues, er
         render={({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <label>Name:</label>
-            <Field
-              name="name"
-              render={({ input }) => renderForm(input, "Name")}
-            />
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <Field
+                name="name"
+                render={({ input }) => renderForm(input, "Name")}
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <label htmlFor="country">Country</label>
+              <Select
+                id="country"
+                options={countryList.map(c => ({ value: c.code, label: c.name }))}
+                value={countryList.find(c => c.code === country) ? { value: country, label: countryList.find(c => c.code === country).name } : null}
+                onChange={option => setCountry(option ? option.value : '')}
+                isClearable
+                placeholder="Select country..."
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <label htmlFor="currency">Currency</label>
+              <Select
+                id="currency"
+                options={currencyList.map(c => ({ value: c.code, label: c.name }))}
+                value={currencyList.find(c => c.code === currency) ? { value: currency, label: currencyList.find(c => c.code === currency).name } : null}
+                onChange={option => setCurrency(option ? option.value : '')}
+                isClearable
+                placeholder="Select currency..."
+              />
+            </div>
             <button className="btn btn-primary">Save</button>
             <LoadingIndicator />
           </form>
