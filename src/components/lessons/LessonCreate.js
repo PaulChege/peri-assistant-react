@@ -25,7 +25,7 @@ function LessonCreate({ createLesson, getStudent, clearLessonCreateSuccess, stud
   }, [lessonCreated, navigate, id]);
 
   const onSubmit = useCallback(async (formValues) => {
-    await trackPromise(createLesson(id, formValues));
+    await trackPromise(createLesson(id, formValues)); // formValues now has date_time
     // Do not navigate here!
   }, [createLesson, id]);
 

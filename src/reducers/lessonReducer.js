@@ -11,28 +11,58 @@ import {
   STUDENT_LESSONS_DELETE
 } from "../actions/types";
 
-const INITIAL_STATE = { lessonCreated: false, lessonUpdated: false, lessons: [] };
+const INITIAL_STATE = { lessonCreated: false, lessonUpdated: false, past_lessons: {}, upcoming_lessons: {}, metadata: {}, currentLesson: null };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case STUDENT_LESSONS_LIST:
-      return { ...state, lessons: action.payload };
+      return { ...state, ...action.payload };
     case STUDENT_LESSONS_SHOW:
-      return { ...state, lessons: [action.payload] };
+      // Store the fetched lesson for editing
+      return { ...state, currentLesson: action.payload };
     case STUDENT_LESSONS_CREATE:
-      return { ...state, lessons: insertLesson(state.lessons, action.payload) };
+      // Add to upcoming_lessons if present
+      return {
+        ...state,
+        upcoming_lessons: {
+          ...state.upcoming_lessons,
+          lessons: [...(state.upcoming_lessons.lessons || []), action.payload]
+        }
+      };
     case STUDENT_LESSONS_CREATE_SUCCESS:
       return { ...state, lessonCreated: true };
     case STUDENT_LESSONS_CREATE_CLEAR:
       return { ...state, lessonCreated: false };
     case STUDENT_LESSONS_UPDATE:
-      return { ...state, lessons: updateLesson(state.lessons, action.payload) };
+      // Update in both lists if present
+      return {
+        ...state,
+        past_lessons: {
+          ...state.past_lessons,
+          lessons: (state.past_lessons.lessons || []).map(l => l.id === action.payload.id ? action.payload : l)
+        },
+        upcoming_lessons: {
+          ...state.upcoming_lessons,
+          lessons: (state.upcoming_lessons.lessons || []).map(l => l.id === action.payload.id ? action.payload : l)
+        }
+      };
     case STUDENT_LESSONS_UPDATE_SUCCESS:
       return { ...state, lessonUpdated: true };
     case STUDENT_LESSONS_UPDATE_CLEAR:
       return { ...state, lessonUpdated: false };
     case STUDENT_LESSONS_DELETE:
-      return { ...state, lessons: removeLesson(state.lessons, action.payload) };
+      // Remove from both lists
+      return {
+        ...state,
+        past_lessons: {
+          ...state.past_lessons,
+          lessons: (state.past_lessons.lessons || []).filter(l => l.id !== action.payload)
+        },
+        upcoming_lessons: {
+          ...state.upcoming_lessons,
+          lessons: (state.upcoming_lessons.lessons || []).filter(l => l.id !== action.payload)
+        }
+      };
     default:
       return state;
   }

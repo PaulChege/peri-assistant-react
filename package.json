@@ -25,6 +25,7 @@
     "react-router-dom": "^7.6.3",
     "react-scripts": "^5.0.1",
     "react-select": "^5.10.1",
+    "react-time-picker": "^7.0.0",
     "redux": "^5.0.1",
     "redux-mock-store": "^1.5.5",
     "redux-thunk": "^3.1.0"

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Field, Form } from "react-final-form";
 import LoadingIndicator from "../LoadingIndicator";
 import periAssistantApi from "../../api/periAssistantApi";
+import 'react-clock/dist/Clock.css';
 
 function InstitutionAutocomplete({ input, disabled, ...rest }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -247,11 +248,32 @@ class StudentForm extends React.Component {
     if (values.schedule) {
       scheduleArr = Object.entries(values.schedule)
         .filter(([_, v]) => v && v.enabled)
-        .map(([dayIdx, v]) => ({
-          day: this.daysOfWeek[dayIdx]?.label,
-          start_time: v.start_time,
-          duration: v.duration
-        }));
+        .map(([dayIdx, v]) => {
+          // Convert react-time-picker value (hh:mm am/pm or 24h) to 24-hour format for API
+          let start_time = v.start_time;
+          if (start_time && /[aApP][mM]$/.test(start_time)) {
+            // If input is in am/pm, convert to 24-hour
+            let [time, ampm] = start_time.split(/ ?([aApP][mM])/);
+            let [h, m] = time.split(":");
+            h = parseInt(h, 10);
+            if (ampm.toLowerCase() === "pm" && h !== 12) h += 12;
+            if (ampm.toLowerCase() === "am" && h === 12) h = 0;
+            start_time = `${h.toString().padStart(2, "0")}:${m}`;
+          } else if (start_time && start_time.length === 5) {
+            // Already in 24-hour format (hh:mm)
+          } else if (start_time) {
+            // react-time-picker may return 12-hour without am/pm, try to parse
+            let [h, m] = start_time.split(":");
+            h = parseInt(h, 10);
+            if (h < 10 && start_time[0] !== '0') h = '0' + h;
+            start_time = `${h}:${m}`;
+          }
+          return {
+            day: this.daysOfWeek[dayIdx]?.label,
+            start_time,
+            duration: v.duration
+          };
+        });
     }
     const submitValues = {
       ...values,

@@ -6,18 +6,33 @@ import { getStudent } from "../../actions/students";
 import { getTime } from "../../helper";
 import { trackPromise } from "react-promise-tracker";
 import { useNavigate, useParams } from "react-router-dom";
+import periAssistantApi from "../../api/periAssistantApi";
 
-function LessonEdit({ updateLesson, getLesson, getStudent, clearLessonUpdateSuccess, initialValues, student, errors }) {
+function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, student, errors }) {
   const navigate = useNavigate();
   const { studentId, id } = useParams();
   const lessonUpdated = useSelector(state => state.lessons.lessonUpdated);
+  const [lesson, setLesson] = React.useState(null);
+  const [metadata, setMetadata] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     getStudent(studentId);
-    getLesson(studentId, id);
+    // Fetch lesson details directly from API
+    const fetchLesson = async () => {
+      setLoading(true);
+      try {
+        const response = await periAssistantApi.get(`/students/${studentId}/lessons/${id}`);
+        setLesson(response.data.lesson);
+        setMetadata(response.data.metadata);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLesson();
     clearLessonUpdateSuccess(); // Clear flag on mount
     return () => clearLessonUpdateSuccess(); // Clear flag on unmount
-  }, [getStudent, getLesson, studentId, id, clearLessonUpdateSuccess]);
+  }, [getStudent, studentId, id, clearLessonUpdateSuccess]);
 
   useEffect(() => {
     if (lessonUpdated) {
@@ -39,30 +54,48 @@ function LessonEdit({ updateLesson, getLesson, getStudent, clearLessonUpdateSucc
   };
 
   const renderInitialValues = () => {
-    if (initialValues) {
+    if (lesson) {
+      // Split date_time into day and time for the form UI
+      let day = "";
+      let time = "";
+      if (lesson.date_time) {
+        const dt = new Date(lesson.date_time);
+        day = dt.toISOString().slice(0, 10); // yyyy-mm-dd
+        time = dt.toTimeString().slice(0, 5); // hh:mm
+      }
       return {
-        ...initialValues,
-        time: getTime(initialValues.time)
+        ...lesson,
+        day,
+        time
       };
     }
   };
 
+  if (loading) {
+    return <div className="container"><br /><br /><div>Loading lesson details...</div></div>;
+  }
   return (
-    <LessonForm
-      title={renderTitle()}
-      onSubmit={onSubmit}
-      errors={errors}
-      initialValues={renderInitialValues()}
-    />
+    <div className="container">
+      {metadata && metadata.student && (
+        <div className="mb-3">
+          <h4 className="mb-1">{metadata.student.name}</h4>
+          <div className="text-muted">{metadata.student.instruments}</div>
+        </div>
+      )}
+      <LessonForm
+        title="Lesson Details"
+        onSubmit={onSubmit}
+        errors={errors}
+        initialValues={renderInitialValues()}
+        currency={metadata && metadata.currency}
+      />
+    </div>
   );
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { studentId, id } = ownProps.match ? ownProps.match.params : {};
+  const { studentId } = ownProps.match ? ownProps.match.params : {};
   return {
-    initialValues: state.lessons.lessons.find(
-      lesson => lesson.id === parseInt(id)
-    ),
     student: state.students[studentId],
     errors: state.errors.lessonUpdateError
   };
@@ -71,6 +104,5 @@ const mapStateToProps = (state, ownProps) => {
 export default connect(mapStateToProps, {
   updateLesson,
   getStudent,
-  getLesson,
   clearLessonUpdateSuccess
 })(LessonEdit);

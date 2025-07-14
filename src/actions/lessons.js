@@ -16,14 +16,14 @@ import {
 } from "./types";
 import { logout, getToken } from "../auth/auth";
 
-export const getLessonList = (student_id) => async (dispatch) => {
+export const getLessonList = (student_id, past_page = 1, upcoming_page = 1) => async (dispatch) => {
   try {
     const response = await periAssistantApi.get(
-      `/students/${student_id}/lessons`
+      `/students/${student_id}/lessons?past_page=${past_page}&upcoming_page=${upcoming_page}`
     );
     dispatch({ type: STUDENT_LESSONS_LIST, payload: response.data });
   } catch (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       logout(dispatch);
     }
   }

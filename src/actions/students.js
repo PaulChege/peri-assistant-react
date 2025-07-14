@@ -55,7 +55,7 @@ export const clearStudentCreateSuccess = () => ({ type: STUDENT_CREATE_CLEAR });
 export const getStudent = (student_id) => async (dispatch) => {
   try {
     const response = await periAssistantApi.get(`/students/${student_id}`);
-    dispatch({ type: STUDENT_SHOW, payload: response.data });
+    dispatch({ type: STUDENT_SHOW, payload: response.data.student });
   } catch (error) {
     if (error.response.status === 401) {
       logout(dispatch);
