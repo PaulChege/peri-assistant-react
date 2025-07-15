@@ -6,7 +6,7 @@ import { trackPromise } from "react-promise-tracker";
 import LoadingIndicator from "./LoadingIndicator";
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const CLIENT_ID =
   "420797426729-kn0ggevqk789epdaic6mgev40gg0e5ch.apps.googleusercontent.com";
@@ -70,11 +70,8 @@ function LogIn(props) {
   };
 
   return (
-    <div className="col-sm-3 mx-auto">
-      <br />
-      <h3 className="text-center">Log In</h3>
-      <br />
-      <p className="text-danger">{props.errors}</p>
+    <div className="auth-card">
+      <img src="/logo.png" alt="logo" className="auth-logo" />
       <Form
         onSubmit={onSubmit}
         render={({ handleSubmit }) => (
@@ -99,11 +96,17 @@ function LogIn(props) {
         )}
       />
       <br />
-      <div className="text-center">
+      <div className="auth-btn-row" style={{ marginTop: '1rem' }}>
         <GoogleLogin
           onSuccess={async (response) => { await login(response); }}
           onError={handleLoginFailure}
         />
+      </div>
+      {/* Add Create Account button at the bottom */}
+      <div className="auth-btn-row" style={{ marginTop: '1.5rem' }}>
+        <Link to="/signup" className="btn btn-outline-secondary">
+          Create an Account
+        </Link>
       </div>
     </div>
   );

@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 const Modal = props => {
-  console.log('Modal show prop:', props.show);
   if (!props.show) return null;
   return ReactDOM.createPortal(
     <div

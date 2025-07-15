@@ -7,7 +7,7 @@ import { getTime, getDateFromDay } from "../../helper";
 import { trackPromise } from "react-promise-tracker";
 import { useNavigate, useParams } from "react-router-dom";
 
-function LessonCreate({ createLesson, getStudent, clearLessonCreateSuccess, student, errors }) {
+function LessonCreate({ createLesson, getStudent, clearLessonCreateSuccess, student, errors, metadata }) {
   const navigate = useNavigate();
   const { id } = useParams();
   const lessonCreated = useSelector(state => state.lessons.lessonCreated);
@@ -50,12 +50,27 @@ function LessonCreate({ createLesson, getStudent, clearLessonCreateSuccess, stud
   };
 
   return (
-    <LessonForm
-      title={renderTitle()}
-      onSubmit={onSubmit}
-      errors={errors}
-      initialValues={renderInitialValues()}
-    />
+    <div className="container main-content">
+      {(metadata && metadata.student) ? (
+        <div className="student-sticky-header">
+          <h4 className="mb-1">{metadata.student.name}</h4>
+          <div className="text-muted">{metadata.student.instruments}</div>
+        </div>
+      ) : student && (
+        <div className="student-sticky-header">
+          <h4 className="mb-1">{student.name}</h4>
+          <div className="text-muted">{student.instruments}</div>
+        </div>
+      )}
+      <div className="lesson-form-card">
+        <LessonForm
+          title={renderTitle()}
+          onSubmit={onSubmit}
+          errors={errors}
+          initialValues={renderInitialValues()}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -63,7 +78,8 @@ const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match ? ownProps.match.params : {};
   return {
     student: state.students[id],
-    errors: state.errors.lessonCreateError
+    errors: state.errors.lessonCreateError,
+    metadata: state.lessons.metadata // Assuming metadata is part of the state
   };
 };
 

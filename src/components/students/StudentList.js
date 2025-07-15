@@ -40,18 +40,21 @@ class StudentList extends React.Component {
   render() {
     return (
       this.props.students && (
-        <div className="container">
+        <div className="container main-content">
           <h4>Students{` (${this.props.students.length})`}</h4>
           <br />
           {this.renderSerchForm()}
-          <Link
-            to="/student/create"
-            className="btn btn-outline-primary btn-sm float-right"
-            style={this.buttonStyle}
-          >
-            <FontAwesomeIcon icon={faPlus} className="icon-padded" />
-            Add Student
-          </Link>
+          {/* Add Student button aligned right */}
+          <div className="d-flex justify-content-end mb-3">
+            <Link
+              to="/student/create"
+              className="btn btn-outline-primary btn-sm"
+              style={this.buttonStyle}
+            >
+              <FontAwesomeIcon icon={faPlus} className="icon-padded" />
+              Add Student
+            </Link>
+          </div>
           <br />
           <br />
           <div className="row">
@@ -66,7 +69,7 @@ class StudentList extends React.Component {
                     <div className="card-body">
                       <h5 className="card-title">{student.name}</h5>
                       <p className="card-text">{student.institution}</p>
-                      <p className="card-text">{student.instrument}</p>
+                      <p className="card-text">{student.instruments}</p>
                       <Link
                         to={`/student/${student.id}/lessons`}
                         className="btn btn-outline-primary btn-sm"

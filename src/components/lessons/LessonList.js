@@ -6,7 +6,6 @@ import { getStudent } from "../../actions/students";
 import { Link, useParams } from "react-router-dom";
 import StudentShow from "../students/StudentShow";
 import { getTime, getReadableDate } from "../../helper";
-import LessonDeleteModal from "./LessonDeleteModal";
 import "../../styling/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMoneyBill, faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -19,8 +18,6 @@ function LessonList(props) {
   const [pastPage, setPastPage] = useState(1);
   const [statusError, setStatusError] = useState("");
   const [removeMessage, setRemoveMessage] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteLesson, setDeleteLesson] = useState(null);
 
   useEffect(() => {
     props.getStudent(id);
@@ -157,16 +154,6 @@ function LessonList(props) {
                   >
                     Details
                   </Link>
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-sm mx-sm-3"
-                    onClick={() => {
-                      setDeleteLesson(lesson);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    Remove
-                  </button>
                 </td>
               </tr>
             );
@@ -196,68 +183,61 @@ function LessonList(props) {
   // Remove loading check for props.student
   // Always render the main content and modal
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       {removeMessage && <div className="alert alert-info" style={{ marginBottom: 10 }}>{removeMessage}</div>}
       {props.metadata && props.metadata.student && (
-        <div className="mb-3">
+        <div className="student-sticky-header">
           <h4 className="mb-1">{props.metadata.student.name}</h4>
           <div className="text-muted">{props.metadata.student.instruments}</div>
         </div>
       )}
-      <p className="text-danger">{props.errors}</p>
-      {statusError && <div className="alert alert-danger" style={{ marginBottom: 10 }}>{statusError}</div>}
-      <StudentShow student={props.student} />
-      <br />
-      <div className="d-flex justify-content-end mb-3">
-        <Link
-          to={`/student/${id}/lessons/create`}
-          className="btn btn-outline-primary btn-sm"
-        >
-          <FontAwesomeIcon icon={faPlus} className="icon-padded" />
-          Add Lesson
-        </Link>
-      </div>
-      <ul className="nav nav-tabs">
-        <li className="nav-item">
-          <button
-            className={`nav-link${activeTab === "upcoming" ? " active" : ""}`}
-            onClick={() => handleTabClick("upcoming")}
+      <div className="lesson-card">
+        <p className="text-danger">{props.errors}</p>
+        {statusError && <div className="alert alert-danger" style={{ marginBottom: 10 }}>{statusError}</div>}
+        <StudentShow student={props.student} />
+        <br />
+        <div className="d-flex justify-content-end mb-3">
+          <Link
+            to={`/student/${id}/lessons/create`}
+            className="btn btn-outline-primary btn-sm"
           >
-            Upcoming Lessons
-          </button>
-        </li>
-        <li className="nav-item">
-          <button
-            className={`nav-link${activeTab === "past" ? " active" : ""}`}
-            onClick={() => handleTabClick("past")}
-          >
-            Past Lessons
-          </button>
-        </li>
-      </ul>
-      <div className="tab-content mt-3">
-        {activeTab === "upcoming" && (
-          <div>
-            {renderLessonsTable(upcoming.lessons || [])}
-            {renderPagination(upcoming.current_page || 1, upcoming.total_pages || 1, handleUpcomingPageChange)}
-          </div>
-        )}
-        {activeTab === "past" && (
-          <div>
-            {renderLessonsTable(past.lessons || [])}
-            {renderPagination(past.current_page || 1, past.total_pages || 1, handlePastPageChange)}
-          </div>
-        )}
+            <FontAwesomeIcon icon={faPlus} className="icon-padded" />
+            Add Lesson
+          </Link>
+        </div>
+        <ul className="nav nav-tabs">
+          <li className="nav-item">
+            <button
+              className={`nav-link${activeTab === "upcoming" ? " active" : ""}`}
+              onClick={() => handleTabClick("upcoming")}
+            >
+              Upcoming Lessons
+            </button>
+          </li>
+          <li className="nav-item">
+            <button
+              className={`nav-link${activeTab === "past" ? " active" : ""}`}
+              onClick={() => handleTabClick("past")}
+            >
+              Past Lessons
+            </button>
+          </li>
+        </ul>
+        <div className="tab-content mt-3">
+          {activeTab === "upcoming" && (
+            <div>
+              {renderLessonsTable(upcoming.lessons || [])}
+              {renderPagination(upcoming.current_page || 1, upcoming.total_pages || 1, handleUpcomingPageChange)}
+            </div>
+          )}
+          {activeTab === "past" && (
+            <div>
+              {renderLessonsTable(past.lessons || [])}
+              {renderPagination(past.current_page || 1, past.total_pages || 1, handlePastPageChange)}
+            </div>
+          )}
+        </div>
       </div>
-      {/* Always render LessonDeleteModal, regardless of student/lesson state */}
-      <LessonDeleteModal
-        student={props.student}
-        lesson={deleteLesson}
-        id="lessonDeleteModal"
-        onRemoved={msg => { setRemoveMessage(msg); setShowDeleteModal(false); }}
-        onClose={() => setShowDeleteModal(false)}
-        show={showDeleteModal}
-      />
     </div>
   );
 }

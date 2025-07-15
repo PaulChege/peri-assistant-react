@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import Login from "./LogIn";
 import UserCreate from "./users/UserCreate";
 import UserEdit from "./users/UserEdit";
@@ -17,14 +17,15 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App({ flash, clearFlash }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = getToken();
-    if (token == null) {
+    if (token == null && location.pathname !== "/login" && location.pathname !== "/signup") {
       navigate("/login");
     }
     // eslint-disable-next-line
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (flash) {
@@ -33,9 +34,12 @@ function App({ flash, clearFlash }) {
     }
   }, [flash, clearFlash]);
 
+  // Only show Header/sidebar if not on login or signup
+  const hideSidebar = location.pathname === "/login" || location.pathname === "/signup";
+
   return (
     <div>
-      <Header />
+      {!hideSidebar && <Header />}
       {flash && (
         <div className="alert alert-success" role="alert">
           <p>{flash}</p>

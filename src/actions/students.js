@@ -20,7 +20,7 @@ export const getStudentList = (search = "") => async (dispatch) => {
     const response = await periAssistantApi.get(`/students?query=${search}`);
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       logout(dispatch);
     }
   }
@@ -57,7 +57,7 @@ export const getStudent = (student_id) => async (dispatch) => {
     const response = await periAssistantApi.get(`/students/${student_id}`);
     dispatch({ type: STUDENT_SHOW, payload: response.data.student });
   } catch (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       logout(dispatch);
     }
   }
@@ -93,7 +93,7 @@ export const deleteStudent = (student_id) => async (dispatch) => {
       payload: "Student deletion successful!",
     });
   } catch (error) {
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       logout(dispatch);
     }
   }

@@ -75,20 +75,22 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
     return <div className="container"><br /><br /><div>Loading lesson details...</div></div>;
   }
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       {metadata && metadata.student && (
-        <div className="mb-3">
+        <div className="student-sticky-header">
           <h4 className="mb-1">{metadata.student.name}</h4>
           <div className="text-muted">{metadata.student.instruments}</div>
         </div>
       )}
-      <LessonForm
-        title="Lesson Details"
-        onSubmit={onSubmit}
-        errors={errors}
-        initialValues={renderInitialValues()}
-        currency={metadata && metadata.currency}
-      />
+      <div className="lesson-form-card">
+        <LessonForm
+          title="Lesson Details"
+          onSubmit={onSubmit}
+          errors={errors}
+          initialValues={renderInitialValues()}
+          currency={metadata && metadata.currency}
+        />
+      </div>
     </div>
   );
 }

@@ -30,13 +30,17 @@ function StudentCreate({ createStudent, getInstrumentList, clearStudentCreateSuc
   }, [createStudent]);
 
   return (
-    <StudentForm
-      title="Add Student"
-      onSubmit={onSubmit}
-      errors={errors}
-      instrumentList={instrumentList}
-      currentUser={currentUser}
-    />
+    <div className="container main-content">
+      <div className="lesson-form-card">
+        <StudentForm
+          title="Add Student"
+          onSubmit={onSubmit}
+          errors={errors}
+          instrumentList={instrumentList}
+          currentUser={currentUser}
+        />
+      </div>
+    </div>
   );
 }
 
