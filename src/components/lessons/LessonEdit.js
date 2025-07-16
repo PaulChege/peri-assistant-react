@@ -7,6 +7,8 @@ import { getTime } from "../../helper";
 import { trackPromise } from "react-promise-tracker";
 import { useNavigate, useParams } from "react-router-dom";
 import periAssistantApi from "../../api/periAssistantApi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, student, errors }) {
   const navigate = useNavigate();
@@ -82,7 +84,7 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
           <div className="text-muted">{metadata.student.instruments}</div>
         </div>
       )}
-      <div className="lesson-form-card">
+      <div className="lesson-form-card" style={{ position: 'relative' }}>
         <LessonForm
           title="Lesson Details"
           onSubmit={onSubmit}

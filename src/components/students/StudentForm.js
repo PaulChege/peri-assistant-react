@@ -141,24 +141,17 @@ function InstrumentDropdown({ input, instrumentList }) {
 }
 
 class StudentForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      homeLessons: false,
-    };
-  }
+  // Remove constructor and state
+
+  // Remove componentDidMount and componentDidUpdate
 
   handleHomeLessonsChange = (e, input) => {
     const checked = e.target.checked;
-    this.setState({ homeLessons: checked }, () => {
-      if (checked) {
-        // Set institution to 'Home' when checked
-        input.onChange('Home');
-      } else {
-        // Clear institution when unchecked
-        input.onChange('');
-      }
-    });
+    if (checked) {
+      input.onChange(true);
+    } else {
+      input.onChange(false);
+    }
   };
 
   renderForm(input, placeholder, type = "") {
@@ -175,72 +168,76 @@ class StudentForm extends React.Component {
   }
 
   daysOfWeek = [
-    { value: 0, label: "Monday" },
-    { value: 1, label: "Tuesday" },
-    { value: 2, label: "Wednesday" },
-    { value: 3, label: "Thursday" },
-    { value: 4, label: "Friday" },
-    { value: 5, label: "Saturday" },
-    { value: 6, label: "Sunday" },
+    { value: "monday", label: "Monday" },
+    { value: "tuesday", label: "Tuesday" },
+    { value: "wednesday", label: "Wednesday" },
+    { value: "thursday", label: "Thursday" },
+    { value: "friday", label: "Friday" },
+    { value: "saturday", label: "Saturday" },
+    { value: "sunday", label: "Sunday" },
   ];
 
-  renderScheduleFields = (values) => (
-    <div>
-      <hr className="mt-2 mb-4" />
-      <h6 className="mb-3">Schedule</h6>
-      <div className="row font-weight-bold mb-2">
-        <div className="col-1"></div>
-        <div className="col-2">Day</div>
-        <div className="col-4">Start Time</div>
-        <div className="col-4">Duration (min)</div>
+  renderScheduleFields = (values) => {
+    const schedule = typeof values.schedule === 'object' && !Array.isArray(values.schedule) ? values.schedule : {};
+    return (
+      <div>
+        <hr className="mt-2 mb-4" />
+        <h6 className="mb-3">Schedule</h6>
+        <div className="row font-weight-bold mb-2">
+          <div className="col-1"></div>
+          <div className="col-2">Day</div>
+          <div className="col-4">Start Time</div>
+          <div className="col-4">Duration (min)</div>
+        </div>
+        {this.daysOfWeek.map((day) => {
+          const key = day.value;
+          const enabled = schedule[key] && schedule[key].enabled;
+          return (
+            <div className="row align-items-center mb-2" key={day.value}>
+              <div className="col-1 pr-0" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Field
+                  name={`schedule.${key}.enabled`}
+                  type="checkbox"
+                  render={({ input }) => (
+                    <input type="checkbox" {...input} style={{ marginRight: 0 }} />
+                  )}
+                />
+              </div>
+              <div className="col-2 pl-3">{day.label}</div>
+              <div className="col-4">
+                <Field
+                  name={`schedule.${key}.start_time`}
+                  render={({ input }) => (
+                    <input
+                      {...input}
+                      type="time"
+                      className="form-control"
+                      disabled={!enabled}
+                    />
+                  )}
+                />
+              </div>
+              <div className="col-4">
+                <Field
+                  name={`schedule.${key}.duration`}
+                  render={({ input }) => (
+                    <input
+                      {...input}
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      placeholder="min"
+                      disabled={!enabled}
+                    />
+                  )}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
-      {this.daysOfWeek.map((day) => {
-        const enabled = values.schedule && values.schedule[day.value] && values.schedule[day.value].enabled;
-        return (
-          <div className="row align-items-center mb-2" key={day.value}>
-            <div className="col-1 pr-0" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Field
-                name={`schedule[${day.value}].enabled`}
-                type="checkbox"
-                render={({ input }) => (
-                  <input type="checkbox" {...input} style={{ marginRight: 0 }} />
-                )}
-              />
-            </div>
-            <div className="col-2 pl-3">{day.label}</div>
-            <div className="col-4">
-              <Field
-                name={`schedule[${day.value}].start_time`}
-                render={({ input }) => (
-                  <input
-                    {...input}
-                    type="time"
-                    className="form-control"
-                    disabled={!enabled}
-                  />
-                )}
-              />
-            </div>
-            <div className="col-4">
-              <Field
-                name={`schedule[${day.value}].duration`}
-                render={({ input }) => (
-                  <input
-                    {...input}
-                    type="number"
-                    min="0"
-                    className="form-control"
-                    placeholder="min"
-                    disabled={!enabled}
-                  />
-                )}
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+    );
+  }
 
   handleSubmit = (values) => {
     // Transform schedule to array of enabled days
@@ -248,11 +245,20 @@ class StudentForm extends React.Component {
     if (values.schedule) {
       scheduleArr = Object.entries(values.schedule)
         .filter(([_, v]) => v && v.enabled)
-        .map(([dayIdx, v]) => {
-          // Convert react-time-picker value (hh:mm am/pm or 24h) to 24-hour format for API
+        .map(([dayKey, v]) => {
+          // Convert local time (hh:mm) to UTC (hh:mm)
           let start_time = v.start_time;
+          if (start_time && start_time.length === 5) {
+            // Assume start_time is in local time, convert to UTC
+            const [h, m] = start_time.split(":").map(Number);
+            const localDate = new Date();
+            localDate.setHours(h, m, 0, 0);
+            const utcHours = localDate.getUTCHours().toString().padStart(2, '0');
+            const utcMinutes = localDate.getUTCMinutes().toString().padStart(2, '0');
+            start_time = `${utcHours}:${utcMinutes}`;
+          }
+          // Convert react-time-picker value (hh:mm am/pm or 24h) to 24-hour format for API
           if (start_time && /[aApP][mM]$/.test(start_time)) {
-            // If input is in am/pm, convert to 24-hour
             let [time, ampm] = start_time.split(/ ?([aApP][mM])/);
             let [h, m] = time.split(":");
             h = parseInt(h, 10);
@@ -260,16 +266,17 @@ class StudentForm extends React.Component {
             if (ampm.toLowerCase() === "am" && h === 12) h = 0;
             start_time = `${h.toString().padStart(2, "0")}:${m}`;
           } else if (start_time && start_time.length === 5) {
-            // Already in 24-hour format (hh:mm)
+            // Already handled above
           } else if (start_time) {
-            // react-time-picker may return 12-hour without am/pm, try to parse
             let [h, m] = start_time.split(":");
             h = parseInt(h, 10);
             if (h < 10 && start_time[0] !== '0') h = '0' + h;
             start_time = `${h}:${m}`;
           }
+          // Map dayKey to label
+          const dayLabel = this.daysOfWeek.find(d => d.value === dayKey)?.label || dayKey;
           return {
-            day: this.daysOfWeek[dayIdx]?.label,
+            day: dayLabel,
             start_time,
             duration: v.duration
           };
@@ -278,7 +285,7 @@ class StudentForm extends React.Component {
     const submitValues = {
       ...values,
       homeLessons: undefined,
-      institution: (this.state.homeLessons || values.homeLessons) ? 'Home' : values.institution,
+      institution: (values.homeLessons) ? 'Home' : values.institution,
       instruments: Array.isArray(values.instruments) ? values.instruments.join(',') : values.instruments,
       schedule: scheduleArr,
       lesson_unit_charge: values.lesson_unit_charge,
@@ -297,6 +304,8 @@ class StudentForm extends React.Component {
         <Form
           onSubmit={this.handleSubmit}
           initialValues={this.props.initialValues}
+          key={JSON.stringify(this.props.initialValues)}
+          enableReinitialize={true}
           render={({ handleSubmit, values }) => (
             <form onSubmit={handleSubmit}>
               <div className="row">
@@ -327,7 +336,7 @@ class StudentForm extends React.Component {
                           type="checkbox"
                           className="form-check-input"
                           id="homeLessonsCheckbox"
-                          checked={this.state.homeLessons}
+                          checked={!!input.value}
                           onChange={e => this.handleHomeLessonsChange(e, input)}
                         />
                         <label className="form-check-label" htmlFor="homeLessonsCheckbox">
@@ -341,7 +350,7 @@ class StudentForm extends React.Component {
                     name="institution"
                     render={({ input }) => (
                       <div className="mb-4">
-                        <InstitutionAutocomplete input={input} disabled={this.state.homeLessons} />
+                        <InstitutionAutocomplete input={input} disabled={values.homeLessons} />
                       </div>
                     )}
                   />
@@ -397,7 +406,13 @@ class StudentForm extends React.Component {
               </div>
               <br />
               <LoadingIndicator />
-              <button className="btn btn-primary">Save</button>
+              <div className="row">
+                <div className="col-sm-6">
+                  <div className="d-flex justify-content-center mt-4">
+                    <button className="btn btn-primary" style={{ minWidth: 140 }}>Save</button>
+                  </div>
+                </div>
+              </div>
             </form>
           )}
         />

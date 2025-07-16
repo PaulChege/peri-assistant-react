@@ -4,7 +4,6 @@ import { getLessonList, sendPaymentReminders } from "../../actions/lessons";
 import periAssistantApi from "../../api/periAssistantApi";
 import { getStudent } from "../../actions/students";
 import { Link, useParams } from "react-router-dom";
-import StudentShow from "../students/StudentShow";
 import { getTime, getReadableDate } from "../../helper";
 import "../../styling/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -194,7 +193,6 @@ function LessonList(props) {
       <div className="lesson-card">
         <p className="text-danger">{props.errors}</p>
         {statusError && <div className="alert alert-danger" style={{ marginBottom: 10 }}>{statusError}</div>}
-        <StudentShow student={props.student} />
         <br />
         <div className="d-flex justify-content-end mb-3">
           <Link
