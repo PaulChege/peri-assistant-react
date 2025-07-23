@@ -11,7 +11,6 @@ import { faPlus, faMoneyBill, faChevronDown } from "@fortawesome/free-solid-svg-
 
 function LessonList(props) {
   const { id } = useParams();
-  const buttonStyle = { color: "white" };
   const [activeTab, setActiveTab] = useState("upcoming");
   const [upcomingPage, setUpcomingPage] = useState(1);
   const [pastPage, setPastPage] = useState(1);
@@ -108,7 +107,8 @@ function LessonList(props) {
             if (lesson.date_time) {
               const dt = new Date(lesson.date_time);
               localDate = formatPrettyDate(dt);
-              localTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+              // Use 24-hour format, user's local timezone
+              localTime = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
             }
             return (
               <tr key={lesson.id}>

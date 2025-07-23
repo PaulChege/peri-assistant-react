@@ -15,8 +15,15 @@ const INITIAL_STATE = { studentCreated: false, studentUpdated: false };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case STUDENT_LIST:
-      return { ...state, ..._.mapKeys(action.payload, "id") };
+    case STUDENT_LIST: {
+      // Only keep studentCreated and studentUpdated, replace the rest with new students
+      const { studentCreated, studentUpdated } = state;
+      return { 
+        studentCreated, 
+        studentUpdated, 
+        ..._.mapKeys(action.payload, "id") 
+      };
+    }
     case STUDENT_CREATE:
       return { ...state, [action.payload.id]: action.payload };
     case STUDENT_CREATE_SUCCESS:

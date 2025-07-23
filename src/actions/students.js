@@ -15,9 +15,23 @@ import {
 } from "./types";
 import { getToken, logout } from "../auth/auth";
 
-export const getStudentList = (search = "") => async (dispatch) => {
+export const getUserStudentInstitutions = () => async (dispatch) => {
   try {
-    const response = await periAssistantApi.get(`/students?query=${search}`);
+    const response = await periAssistantApi.get('/institutions/user_student_institutions');
+    return response.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const getStudentList = (search = "", institution_filter = "", instrument_filter = "") => async (dispatch) => {
+  try {
+    let url = `/students?`;
+    if (search) url += `query=${encodeURIComponent(search)}&`;
+    if (institution_filter) url += `institution_filter=${encodeURIComponent(institution_filter)}&`;
+    if (instrument_filter) url += `instrument_filter=${encodeURIComponent(instrument_filter)}&`;
+    url = url.replace(/&$/, "");
+    const response = await periAssistantApi.get(url);
     dispatch({ type: STUDENT_LIST, payload: response.data });
   } catch (error) {
     if (error.response && error.response.status === 401) {
