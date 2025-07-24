@@ -9,6 +9,7 @@ import {
   faGraduationCap,
   faBars,
   faTimes,
+  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styling/styles.css";
 
@@ -81,6 +82,11 @@ function Header(props) {
         <li>
           <Link to="/" onClick={closeSidebar}>
             <FontAwesomeIcon icon={faGraduationCap} className="icon-padded" /> Students
+          </Link>
+        </li>
+        <li>
+          <Link to="/calendar" onClick={closeSidebar}>
+            <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" /> Calendar View
           </Link>
         </li>
         <li>

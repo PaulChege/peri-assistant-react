@@ -10,6 +10,7 @@ import LessonList from "./lessons/LessonList";
 import LessonCreate from "./lessons/LessonCreate";
 import LessonEdit from "./lessons/LessonEdit";
 import Header from "./Header";
+import CalendarView from "./CalendarView";
 import { getToken } from "../auth/auth";
 import { connect } from "react-redux";
 import { clearFlash } from "../actions/flash";
@@ -55,6 +56,7 @@ function App({ flash, clearFlash }) {
         <Route path="/student/:id/lessons" element={<LessonList />} />
         <Route path="/student/:id/lessons/create" element={<LessonCreate />} />
         <Route path="/student/:studentId/lesson/:id/edit" element={<LessonEdit />} />
+        <Route path="/calendar" element={<CalendarView />} />
       </Routes>
     </div>
   );
