@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout, getToken } from "../auth/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +15,7 @@ import "../styling/styles.css";
 
 function Header(props) {
   const navigate = useNavigate();
+  const location = useLocation();
   // Set sidebar open by default on desktop, closed on mobile
   const getInitialSidebarState = () => {
     if (typeof window !== 'undefined') {
@@ -80,17 +81,29 @@ function Header(props) {
       </div>
       <ul className="sidebar-links">
         <li>
-          <Link to="/" onClick={closeSidebar}>
+          <Link 
+            to="/" 
+            onClick={closeSidebar}
+            className={location.pathname === "/" ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faGraduationCap} className="icon-padded" /> Students
           </Link>
         </li>
         <li>
-          <Link to="/calendar" onClick={closeSidebar}>
-            <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" /> Calendar View
+          <Link 
+            to="/calendar" 
+            onClick={closeSidebar}
+            className={location.pathname === "/calendar" ? "active" : ""}
+          >
+            <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" /> Calendar
           </Link>
         </li>
         <li>
-          <Link to="/user" onClick={closeSidebar}>
+          <Link 
+            to="/user" 
+            onClick={closeSidebar}
+            className={location.pathname === "/user" ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faUserCircle} className="icon-padded" /> Account
           </Link>
         </li>

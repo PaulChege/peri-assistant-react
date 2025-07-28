@@ -94,7 +94,7 @@ function LessonList(props) {
             <th style={{ whiteSpace: 'nowrap' }}>Date</th>
             <th style={{ whiteSpace: 'nowrap' }}>Time</th>
             <th style={{ whiteSpace: 'nowrap' }}>Duration (min)</th>
-            <th style={{ whiteSpace: 'nowrap' }}>Status</th>
+            <th style={{ whiteSpace: 'nowrap' }}>Attendance</th>
             <th style={{ whiteSpace: 'nowrap' }}>Paid</th>
             <th style={{ whiteSpace: 'nowrap' }}>Charge{props.metadata && props.metadata.currency ? ` (${props.metadata.currency})` : ''}</th>
           </tr>

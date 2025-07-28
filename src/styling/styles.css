@@ -78,6 +78,13 @@
   background: #1a2230;
 }
 
+/* Active state for sidebar links */
+.sidebar-links a.active {
+  background: #1a2230;
+  color: #fff;
+  font-weight: 600;
+}
+
 /* Overlay for mobile */
 .sidebar-overlay {
   position: fixed;
