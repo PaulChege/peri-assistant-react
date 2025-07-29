@@ -6,10 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserCircle,
   faSignOutAlt,
-  faGraduationCap,
+  faUser,
   faBars,
   faTimes,
   faCalendarAlt,
+  faMusic,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styling/styles.css";
 
@@ -86,7 +87,16 @@ function Header(props) {
             onClick={closeSidebar}
             className={location.pathname === "/" ? "active" : ""}
           >
-            <FontAwesomeIcon icon={faGraduationCap} className="icon-padded" /> Students
+            <FontAwesomeIcon icon={faUser} className="icon-padded" style={{ marginRight: '8px' }} /> Students
+          </Link>
+        </li>
+        <li>
+          <Link 
+            to="/lessons" 
+            onClick={closeSidebar}
+            className={location.pathname === "/lessons" ? "active" : ""}
+          >
+            <FontAwesomeIcon icon={faMusic} className="icon-padded" style={{ marginRight: '8px' }} /> Lessons
           </Link>
         </li>
         <li>
@@ -95,7 +105,7 @@ function Header(props) {
             onClick={closeSidebar}
             className={location.pathname === "/calendar" ? "active" : ""}
           >
-            <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" /> Calendar
+            <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" style={{ marginRight: '8px' }} /> Calendar
           </Link>
         </li>
         <li>
@@ -104,12 +114,12 @@ function Header(props) {
             onClick={closeSidebar}
             className={location.pathname === "/user" ? "active" : ""}
           >
-            <FontAwesomeIcon icon={faUserCircle} className="icon-padded" /> Account
+            <FontAwesomeIcon icon={faUserCircle} className="icon-padded" style={{ marginRight: '8px' }} /> Account
           </Link>
         </li>
         <li>
           <button className="sidebar-link-btn" onClick={onLogOut}>
-            <FontAwesomeIcon icon={faSignOutAlt} className="icon-padded" /> Log Out
+            <FontAwesomeIcon icon={faSignOutAlt} className="icon-padded" style={{ marginRight: '8px' }} /> Log Out
           </button>
         </li>
       </ul>

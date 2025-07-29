@@ -1,47 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { getLessonList, sendPaymentReminders, updateLesson } from "../../actions/lessons";
+import { getAllLessons, updateLesson } from "../../actions/lessons";
 import periAssistantApi from "../../api/periAssistantApi";
-import { getStudent } from "../../actions/students";
-import { Link, useParams } from "react-router-dom";
-import { getTime, getReadableDate } from "../../helper";
-import "../../styling/styles.css";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faMoneyBill, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import "../../styling/styles.css";
 
-function LessonList(props) {
-  const { id } = useParams();
+function AllLessons(props) {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [upcomingPage, setUpcomingPage] = useState(1);
   const [pastPage, setPastPage] = useState(1);
   const [statusError, setStatusError] = useState("");
-  const [removeMessage, setRemoveMessage] = useState("");
+  const [institutions, setInstitutions] = useState([]);
+  const [selectedInstitution, setSelectedInstitution] = useState("");
 
   useEffect(() => {
-    props.getStudent(id);
-    // Fetch both lists on mount or id change
-    props.getLessonList(id, pastPage, upcomingPage);
-    setStatusError(""); // Clear error on tab/page change
-    // eslint-disable-next-line
-  }, [id, pastPage, upcomingPage]);
+    // Fetch institutions for filter
+    periAssistantApi.get('/users/student_institutions').then((response) => {
+      setInstitutions(response.data);
+    }).catch(() => {
+      setInstitutions([]);
+    });
 
-  const sendPaymentReminders = () => {
-    props.sendPaymentReminders(id);
-  };
+    // Fetch lessons on mount
+    props.getAllLessons(selectedInstitution, pastPage, upcomingPage);
+    setStatusError("");
+    // eslint-disable-next-line
+  }, [selectedInstitution, pastPage, upcomingPage]);
 
   // Tab and pagination handlers
   const handleTabClick = (tab) => setActiveTab(tab);
   const handleUpcomingPageChange = (page) => setUpcomingPage(page);
   const handlePastPageChange = (page) => setPastPage(page);
+  const handleInstitutionChange = (institution) => {
+    setSelectedInstitution(institution);
+    setUpcomingPage(1);
+    setPastPage(1);
+  };
 
   // Helper to update lesson status
   const handleStatusChange = async (lessonId, newStatus) => {
     try {
-      const studentId = props.student?.id || id;
-      await props.updateLesson(studentId, lessonId, { status: newStatus });
-      props.getLessonList(id, pastPage, upcomingPage);
+      // Get the student ID from the lesson data
+      const lesson = [...(props.upcoming_lessons?.lessons || []), ...(props.past_lessons?.lessons || [])]
+        .find(l => l.id === lessonId);
+      
+      if (!lesson || !lesson.student || !lesson.student.id) {
+        setStatusError('Student information not available');
+        return;
+      }
+
+      await props.updateLesson(lesson.student.id, lessonId, { status: newStatus });
+      props.getAllLessons(selectedInstitution, pastPage, upcomingPage);
       setStatusError("");
     } catch (err) {
+      console.error('Status update error:', err);
       if (err.response && err.response.status === 422 && err.response.data && err.response.data.message) {
         setStatusError(err.response.data.message);
       } else {
@@ -53,11 +67,21 @@ function LessonList(props) {
   // Helper to update lesson paid status
   const handlePaidChange = async (lessonId, newPaid) => {
     try {
-      const studentId = props.student?.id || id;
-      await props.updateLesson(studentId, lessonId, { paid: newPaid === 'yes' });
-      props.getLessonList(id, pastPage, upcomingPage);
+      // Get the student ID from the lesson data
+      const lesson = [...(props.upcoming_lessons?.lessons || []), ...(props.past_lessons?.lessons || [])]
+        .find(l => l.id === lessonId);
+      
+      if (!lesson || !lesson.student || !lesson.student.id) {
+        setStatusError('Student information not available');
+        return;
+      }
+
+      console.log('Updating paid status:', { lessonId, newPaid, studentId: lesson.student.id }); // Debug log
+      await props.updateLesson(lesson.student.id, lessonId, { paid: newPaid === 'yes' });
+      props.getAllLessons(selectedInstitution, pastPage, upcomingPage);
       setStatusError("");
     } catch (err) {
+      console.error('Paid status update error:', err);
       if (err.response && err.response.status === 422 && err.response.data && err.response.data.message) {
         setStatusError(err.response.data.message);
       } else {
@@ -91,12 +115,15 @@ function LessonList(props) {
       <table className="table table-bordered table-responsive-sm table-sm table-auto" style={{ tableLayout: 'auto' }}>
         <thead className="thead-light">
           <tr>
+            <th style={{ whiteSpace: 'nowrap' }}>Student</th>
+            <th style={{ whiteSpace: 'nowrap' }}>Institution</th>
             <th style={{ whiteSpace: 'nowrap' }}>Date</th>
             <th style={{ whiteSpace: 'nowrap' }}>Time</th>
             <th style={{ whiteSpace: 'nowrap' }}>Duration (min)</th>
             <th style={{ whiteSpace: 'nowrap' }}>Attendance</th>
             <th style={{ whiteSpace: 'nowrap' }}>Paid</th>
             <th style={{ whiteSpace: 'nowrap' }}>Charge{props.metadata && props.metadata.currency ? ` (${props.metadata.currency})` : ''}</th>
+            <th style={{ whiteSpace: 'nowrap' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -112,6 +139,16 @@ function LessonList(props) {
             }
             return (
               <tr key={lesson.id}>
+                <td>
+                  <Link to={`/student/${lesson.student?.id}/lessons`} className="text-decoration-none">
+                    {lesson.student?.name || 'Unknown Student'}
+                  </Link>
+                </td>
+                <td>
+                  <span title={lesson.institution?.name || ''} style={{ maxWidth: '150px', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {lesson.institution?.name || ''}
+                  </span>
+                </td>
                 <td>{localDate}</td>
                 <td>{localTime}</td>
                 <td>{lesson.duration}</td>
@@ -148,7 +185,7 @@ function LessonList(props) {
                 <td>{lesson.charge}</td>
                 <td>
                   <Link
-                    to={`/student/${id}/lesson/${lesson.id}/edit`}
+                    to={`/lesson/${lesson.id}/edit`}
                     className="btn btn-primary btn-sm"
                   >
                     Details
@@ -179,102 +216,71 @@ function LessonList(props) {
   const upcoming = props.upcoming_lessons || { lessons: [], current_page: 1, total_pages: 1 };
   const past = props.past_lessons || { lessons: [], current_page: 1, total_pages: 1 };
 
-  // Remove loading check for props.student
-  // Always render the main content and modal
   return (
-    <div className="container" style={{ paddingTop: '2.5rem' }}>
-      {removeMessage && <div className="alert alert-info" style={{ marginBottom: 10 }}>{removeMessage}</div>}
-      {props.metadata && props.metadata.student && (
-        <div className="student-sticky-header">
-          <h4 className="mb-1">{props.metadata.student.name}</h4>
-          <div className="text-muted">{props.metadata.student.instruments}</div>
-          {/* Schedule summary */}
-          {Array.isArray(props.metadata.student.schedule) && props.metadata.student.schedule.length > 0 && (
-            <div className="text-muted" style={{ fontSize: '0.85em', marginTop: '0.25rem' }}>
-              {props.metadata.student.schedule.slice(0, 2).map((item, idx) => {
-                // Format: Mondays at 12:30
-                const day = item.day || '';
-                let time = '';
-                if (item.start_time) {
-                  // Convert UTC to local time string (hh:mm)
-                  const [h, m] = item.start_time.split(":");
-                  const date = new Date();
-                  date.setUTCHours(Number(h), Number(m), 0, 0);
-                  time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-                }
-                return `${day}${time ? `s at ${time}` : ''}`;
-              }).join(', ')}
-              {props.metadata.student.schedule.length > 2 ? '…' : ''}
-            </div>
-          )}
-        </div>
-      )}
-      <div className="lesson-card">
-        <p className="text-danger">{props.errors}</p>
-        {statusError && <div className="alert alert-danger" style={{ marginBottom: 10 }}>{statusError}</div>}
-        <br />
-        <div className="d-flex justify-content-end mb-3">
-          <Link
-            to={`/student/${id}/lessons/create`}
-            className="btn btn-outline-primary btn-sm"
+    <div className="container main-content">
+      <h4>Lessons</h4>
+      <p className="text-danger">{props.errors}</p>
+      {statusError && <div className="alert alert-danger" style={{ marginBottom: 10 }}>{statusError}</div>}
+      <br />
+      
+      {/* Institution Filter */}
+      <div className="d-flex align-items-center mb-3">
+        <select
+          className="form-select form-select-sm rounded-pill shadow-sm border-0"
+          value={selectedInstitution}
+          onChange={e => handleInstitutionChange(e.target.value)}
+          style={{ maxWidth: 200 }}
+        >
+          <option value="">All Institutions</option>
+          {institutions.map((inst, idx) => (
+            <option key={idx} value={inst}>{inst}</option>
+          ))}
+        </select>
+      </div>
+
+      <ul className="nav nav-tabs">
+        <li className="nav-item">
+          <button
+            className={`nav-link${activeTab === "upcoming" ? " active" : ""}`}
+            onClick={() => handleTabClick("upcoming")}
           >
-            <FontAwesomeIcon icon={faPlus} className="icon-padded" />
-            Add Lesson
-          </Link>
-        </div>
-        <ul className="nav nav-tabs">
-          <li className="nav-item">
-            <button
-              className={`nav-link${activeTab === "upcoming" ? " active" : ""}`}
-              onClick={() => handleTabClick("upcoming")}
-            >
-              Upcoming Lessons
-            </button>
-          </li>
-          <li className="nav-item">
-            <button
-              className={`nav-link${activeTab === "past" ? " active" : ""}`}
-              onClick={() => handleTabClick("past")}
-            >
-              Past Lessons
-            </button>
-          </li>
-        </ul>
-        <div className="tab-content mt-3">
-          {activeTab === "upcoming" && (
-            <div>
-              {renderLessonsTable(upcoming.lessons || [])}
-              {renderPagination(upcoming.current_page || 1, upcoming.total_pages || 1, handleUpcomingPageChange)}
-            </div>
-          )}
-          {activeTab === "past" && (
-            <div>
-              {renderLessonsTable(past.lessons || [])}
-              {renderPagination(past.current_page || 1, past.total_pages || 1, handlePastPageChange)}
-            </div>
-          )}
-        </div>
+            Upcoming Lessons
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link${activeTab === "past" ? " active" : ""}`}
+            onClick={() => handleTabClick("past")}
+          >
+            Past Lessons
+          </button>
+        </li>
+      </ul>
+      <div className="tab-content mt-3">
+        {activeTab === "upcoming" && (
+          <div>
+            {renderLessonsTable(upcoming.lessons || [])}
+            {renderPagination(upcoming.current_page || 1, upcoming.total_pages || 1, handleUpcomingPageChange)}
+          </div>
+        )}
+        {activeTab === "past" && (
+          <div>
+            {renderLessonsTable(past.lessons || [])}
+            {renderPagination(past.current_page || 1, past.total_pages || 1, handlePastPageChange)}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const id = ownProps.id;
+const mapStateToProps = (state) => {
   return {
-    errors: state.errors.paymentReminderError,
+    errors: state.errors.lessonUpdateError,
     upcoming_lessons: state.lessons.upcoming_lessons,
     past_lessons: state.lessons.past_lessons,
-    student: state.students[id],
     metadata: state.lessons.metadata,
   };
 };
-export default connect(mapStateToProps, {
-  getLessonList,
-  getStudent,
-  sendPaymentReminders,
-  updateLesson,
-})(props => {
-  const params = useParams();
-  return <LessonList {...props} id={params.id} />;
-});
+
+export default connect(mapStateToProps, { getAllLessons, updateLesson })(AllLessons); 

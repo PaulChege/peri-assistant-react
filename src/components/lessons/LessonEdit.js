@@ -19,14 +19,18 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
-    getStudent(studentId);
-    // Fetch lesson details directly from API
+    // Fetch lesson details directly from API using new endpoint
     const fetchLesson = async () => {
       setLoading(true);
       try {
-        const response = await periAssistantApi.get(`/students/${studentId}/lessons/${id}`);
+        const response = await periAssistantApi.get(`/lessons/${id}`);
         setLesson(response.data.lesson);
         setMetadata(response.data.metadata);
+        
+        // If we have student info from the lesson, get the student details
+        if (response.data.lesson && response.data.lesson.student && response.data.lesson.student.id) {
+          getStudent(response.data.lesson.student.id);
+        }
       } finally {
         setLoading(false);
       }
@@ -34,18 +38,25 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
     fetchLesson();
     clearLessonUpdateSuccess(); // Clear flag on mount
     return () => clearLessonUpdateSuccess(); // Clear flag on unmount
-  }, [getStudent, studentId, id, clearLessonUpdateSuccess]);
+  }, [getStudent, id, clearLessonUpdateSuccess]);
 
   useEffect(() => {
     if (lessonUpdated) {
-      navigate(`/student/${studentId}/lessons`);
+      // Navigate back to the lessons page, or to the student's lessons if we have student info
+      if (lesson && lesson.student && lesson.student.id) {
+        navigate(`/student/${lesson.student.id}/lessons`);
+      } else {
+        navigate('/lessons');
+      }
     }
-  }, [lessonUpdated, navigate, studentId]);
+  }, [lessonUpdated, navigate, lesson]);
 
   const onSubmit = useCallback(async (formValues) => {
-    await trackPromise(updateLesson(studentId, id, formValues));
+    // Get student ID from lesson data if available, otherwise use the URL param
+    const studentIdToUse = lesson && lesson.student && lesson.student.id ? lesson.student.id : studentId;
+    await trackPromise(updateLesson(studentIdToUse, id, formValues));
     // Do not navigate here!
-  }, [updateLesson, studentId, id]);
+  }, [updateLesson, lesson, studentId, id]);
 
   const renderTitle = () => {
     if (student) {

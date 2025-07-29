@@ -19,8 +19,23 @@ import { logout, getToken } from "../auth/auth";
 export const getLessonList = (student_id, past_page = 1, upcoming_page = 1) => async (dispatch) => {
   try {
     const response = await periAssistantApi.get(
-      `/students/${student_id}/lessons?past_page=${past_page}&upcoming_page=${upcoming_page}`
+      `/lessons?student_id=${student_id}&past_page=${past_page}&upcoming_page=${upcoming_page}`
     );
+    dispatch({ type: STUDENT_LESSONS_LIST, payload: response.data });
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      logout(dispatch);
+    }
+  }
+};
+
+export const getAllLessons = (institution_filter = "", past_page = 1, upcoming_page = 1) => async (dispatch) => {
+  try {
+    let url = `/lessons?past_page=${past_page}&upcoming_page=${upcoming_page}`;
+    if (institution_filter) {
+      url += `&institution_filter=${encodeURIComponent(institution_filter)}`;
+    }
+    const response = await periAssistantApi.get(url);
     dispatch({ type: STUDENT_LESSONS_LIST, payload: response.data });
   } catch (error) {
     if (error.response && error.response.status === 401) {
@@ -32,8 +47,8 @@ export const getLessonList = (student_id, past_page = 1, upcoming_page = 1) => a
 export const createLesson = (studentId, formValues) => async (dispatch) => {
   try {
     const response = await periAssistantApi.post(
-      `/students/${studentId}/lessons`,
-      { lesson: formValues }
+      `/lessons`,
+      { lesson: { ...formValues, student_id: studentId } }
     );
     dispatch({ type: STUDENT_LESSONS_CREATE, payload: response.data });
     dispatch({ type: STUDENT_LESSONS_CREATE_SUCCESS });
@@ -54,7 +69,7 @@ export const clearLessonCreateSuccess = () => ({ type: STUDENT_LESSONS_CREATE_CL
 export const getLesson = (studentId, lessonId) => async (dispatch) => {
   try {
     const response = await periAssistantApi.get(
-      `/students/${studentId}/lessons/${lessonId}`
+      `/lessons/${lessonId}`
     );
     dispatch({ type: STUDENT_LESSONS_SHOW, payload: response.data });
   } catch (error) {
@@ -69,17 +84,13 @@ export const updateLesson = (studentId, lessonId, formValues) => async (
 ) => {
   try {
     const response = await periAssistantApi.put(
-      `/students/${studentId}/lessons/${lessonId}`,
+      `/lessons/${lessonId}`,
       {
         lesson: formValues,
       }
     );
     dispatch({ type: STUDENT_LESSONS_UPDATE, payload: response.data });
     dispatch({ type: STUDENT_LESSONS_UPDATE_SUCCESS });
-    dispatch({
-      type: FLASH_SUCCESS,
-      payload: "Lesson update successful!",
-    });
   } catch (error) {
     dispatch({
       type: STUDENT_LESSONS_UPDATE_FAILED,
@@ -88,11 +99,13 @@ export const updateLesson = (studentId, lessonId, formValues) => async (
   }
 };
 
+
+
 export const clearLessonUpdateSuccess = () => ({ type: STUDENT_LESSONS_UPDATE_CLEAR });
 
 export const deleteLesson = (studentId, lessonId) => async (dispatch) => {
   try {
-    await periAssistantApi.delete(`/students/${studentId}/lessons/${lessonId}`);
+    await periAssistantApi.delete(`/lessons/${lessonId}`);
     dispatch({ type: STUDENT_LESSONS_DELETE, payload: lessonId });
     dispatch({
       type: FLASH_SUCCESS,
