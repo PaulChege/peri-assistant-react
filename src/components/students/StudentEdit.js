@@ -9,6 +9,8 @@ import { trackPromise } from "react-promise-tracker";
 import { useNavigate, useParams } from "react-router-dom";
 import periAssistantApi from "../../api/periAssistantApi";
 import LoadingIndicator from "../LoadingIndicator";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 function StudentEdit({ updateStudent, getInstrumentList, clearStudentUpdateSuccess, errors, instrumentList, currentUser, getUser }) {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ function StudentEdit({ updateStudent, getInstrumentList, clearStudentUpdateSucce
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [refreshCount, setRefreshCount] = useState(0);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
 
   useEffect(() => {
     getInstrumentList();
@@ -59,6 +62,17 @@ function StudentEdit({ updateStudent, getInstrumentList, clearStudentUpdateSucce
     // Do not navigate here!
   }, [updateStudent, id]);
 
+  const handleRemoveStudent = async () => {
+    try {
+      await trackPromise(updateStudent(id, { status: 'inactive' }));
+      setShowRemoveModal(false);
+      // Navigate back to students list after successful removal
+      navigate("/");
+    } catch (err) {
+      console.error('Failed to remove student:', err);
+    }
+  };
+
   const renderInitialValues = () => {
     if (student) {
       // Handle institution
@@ -69,7 +83,7 @@ function StudentEdit({ updateStudent, getInstrumentList, clearStudentUpdateSucce
           homeLessons = true;
           institutionValue = 'Home';
         } else {
-          institutionValue = student.institution.name || '';
+          institutionValue = student.institution.name  || '';
         }
       } else if (typeof student.institution === 'string') {
         institutionValue = student.institution;
@@ -137,16 +151,116 @@ function StudentEdit({ updateStudent, getInstrumentList, clearStudentUpdateSucce
           </div>
         </div>
       ) : (
-        <div className="lesson-form-card">
-          <StudentForm
-            title="Edit Student"
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            errors={errors}
-            instrumentList={instrumentList}
-            currentUser={currentUser}
-          />
-        </div>
+        <>
+          <div className="lesson-form-card">
+            <StudentForm
+              title="Edit Student"
+              initialValues={initialValues}
+              onSubmit={onSubmit}
+              errors={errors}
+              instrumentList={instrumentList}
+              currentUser={currentUser}
+            />
+            
+            {/* Remove Button */}
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="d-flex justify-content-center mt-5">
+                  <button 
+                    className="btn btn-danger btn-sm"
+                    onClick={() => setShowRemoveModal(true)}
+                    style={{ 
+                      minWidth: 80,
+                      backgroundColor: '#dc3545',
+                      borderColor: '#dc3545',
+                      color: 'white',
+                      fontSize: '0.875rem',
+                      padding: '0.25rem 0.5rem'
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="me-1" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <div className="col-sm-6"></div>
+            </div>
+          </div>
+
+          {/* Confirmation Modal */}
+          {showRemoveModal && (
+            <>
+              <div 
+                className="modal-backdrop fade show" 
+                style={{ 
+                  position: 'fixed', 
+                  top: 0, 
+                  left: 0, 
+                  width: '100vw', 
+                  height: '100vh', 
+                  backgroundColor: 'rgba(0,0,0,0.5)', 
+                  zIndex: 1040 
+                }}
+                onClick={() => setShowRemoveModal(false)}
+              ></div>
+              <div 
+                className="modal fade show" 
+                style={{ 
+                  display: 'block', 
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  zIndex: 1050,
+                  pointerEvents: 'none'
+                }} 
+                tabIndex="-1"
+              >
+                <div 
+                  className="modal-dialog"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title">Confirm Removal</h5>
+                      <button 
+                        type="button" 
+                        className="btn-close" 
+                        onClick={() => setShowRemoveModal(false)}
+                      ></button>
+                    </div>
+                    <div className="modal-body">
+                      <p>Are you sure you want to remove this student? </p>
+                      <p className="text-muted small">The student will be marked as inactive and hidden from the main student list. You can always reactivate the student later.</p>
+                    </div>
+                    <div className="modal-footer">
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        onClick={() => setShowRemoveModal(false)}
+                      >
+                        Cancel
+                      </button>
+                                          <button 
+                      type="button" 
+                      className="btn btn-danger" 
+                      onClick={handleRemoveStudent}
+                      style={{
+                        backgroundColor: '#dc3545',
+                        borderColor: '#dc3545',
+                        color: 'white'
+                      }}
+                    >
+                      Remove Student
+                    </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );

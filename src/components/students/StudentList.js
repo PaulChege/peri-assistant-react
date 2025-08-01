@@ -203,6 +203,17 @@ class StudentList extends React.Component {
               })
             )}
           </div>
+          
+          {/* View Removed Students Link */}
+          <div className="d-flex justify-content-center mt-4">
+            <Link
+              to="/students/removed"
+              className="text-muted text-decoration-none"
+              style={{ fontSize: '0.9em' }}
+            >
+              View removed students
+            </Link>
+          </div>
         </div>
       )
     );

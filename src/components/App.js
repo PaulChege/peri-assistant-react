@@ -6,6 +6,7 @@ import UserEdit from "./users/UserEdit";
 import StudentList from "./students/StudentList";
 import StudentCreate from "./students/StudentCreate";
 import StudentEdit from "./students/StudentEdit";
+import RemovedStudents from "./students/RemovedStudents";
 import LessonList from "./lessons/LessonList";
 import AllLessons from "./lessons/AllLessons";
 import LessonCreate from "./lessons/LessonCreate";
@@ -55,6 +56,7 @@ function App({ flash, clearFlash }) {
         <Route path="/student/create" element={<StudentCreate />} />
         <Route path="/student/:id/edit" element={<StudentEdit />} />
         <Route path="/student/:id/lessons" element={<LessonList />} />
+        <Route path="/students/removed" element={<RemovedStudents />} />
         <Route path="/student/:id/lessons/create" element={<LessonCreate />} />
         <Route path="/student/:studentId/lesson/:id/edit" element={<LessonEdit />} />
         <Route path="/lesson/:id/edit" element={<LessonEdit />} />

@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { Field, Form } from "react-final-form";
 import LoadingIndicator from "../LoadingIndicator";
 import periAssistantApi from "../../api/periAssistantApi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 import 'react-clock/dist/Clock.css';
 
 function InstitutionAutocomplete({ input, disabled, ...rest }) {
@@ -409,9 +411,13 @@ class StudentForm extends React.Component {
               <div className="row">
                 <div className="col-sm-6">
                   <div className="d-flex justify-content-center mt-4">
-                    <button className="btn btn-primary" style={{ minWidth: 140 }}>Save</button>
+                    <button className="btn btn-primary" style={{ minWidth: 140 }}>
+                      <FontAwesomeIcon icon={faSave} className="me-2" />
+                      Save
+                    </button>
                   </div>
                 </div>
+                <div className="col-sm-6"></div>
               </div>
             </form>
           )}
