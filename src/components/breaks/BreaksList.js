@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import periAssistantApi from "../../api/periAssistantApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit, faCheck, faTimes, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import "../../styling/styles.css";
 
 function BreaksList(props) {
@@ -98,98 +99,117 @@ function BreaksList(props) {
 
   return (
     <div className="container main-content">
-      <h4>Breaks</h4>
-      <p className="text-muted">Lessons won't be scheduled during breaks</p>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4>Breaks</h4>
+          <p className="text-muted mb-0">Lessons won't be scheduled during breaks</p>
+        </div>
+      </div>
       
       {breaks.length === 0 ? (
         <div className="text-center text-muted" style={{ fontSize: '1.2em', padding: '2em 0' }}>
           No breaks scheduled
         </div>
       ) : (
-        <div className="table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="thead-light">
-              <tr>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Break By</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {breaks.map((breakItem) => (
-                <tr key={breakItem.id}>
-                  <td>
-                    {editingBreak && editingBreak.id === breakItem.id ? (
-                      <input
-                        type="date"
-                        className="form-control form-control-sm"
-                        value={editingBreak.start_date}
-                        onChange={(e) => setEditingBreak(prev => ({ ...prev, start_date: e.target.value }))}
-                      />
-                    ) : (
-                      formatDate(breakItem.start_date)
-                    )}
-                  </td>
-                  <td>
-                    {editingBreak && editingBreak.id === breakItem.id ? (
-                      <input
-                        type="date"
-                        className="form-control form-control-sm"
-                        value={editingBreak.end_date}
-                        onChange={(e) => setEditingBreak(prev => ({ ...prev, end_date: e.target.value }))}
-                      />
-                    ) : (
-                      formatDate(breakItem.end_date)
-                    )}
-                  </td>
-                  <td>{breakItem.break_by}</td>
-                  <td>
-                    {editingBreak && editingBreak.id === breakItem.id ? (
-                      <div className="btn-group btn-group-sm">
-                        <button
-                          className="btn btn-success"
-                          onClick={handleSaveBreak}
-                          title="Save changes"
-                        >
-                          <FontAwesomeIcon icon={faCheck} />
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          onClick={handleCancelEdit}
-                          title="Cancel editing"
-                        >
-                          <FontAwesomeIcon icon={faTimes} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="btn-group btn-group-sm">
-                        <button
-                          className="btn btn-outline-primary"
-                          onClick={() => handleEditBreak(breakItem)}
-                          title="Edit break"
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          className="btn btn-outline-danger"
-                          onClick={() => handleDeleteBreak(breakItem.id)}
-                          disabled={deletingBreaks.has(breakItem.id)}
-                          title="Delete break"
-                        >
-                          {deletingBreaks.has(breakItem.id) ? (
-                            <div className="spinner-border spinner-border-sm" role="status"></div>
-                          ) : (
-                            <FontAwesomeIcon icon={faTrash} />
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="row">
+          <div className="col-9">
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover">
+                <thead className="thead-light">
+                  <tr>
+                    <th>Who's breaking</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {breaks.map((breakItem) => (
+                    <tr key={breakItem.id}>
+                      <td>{breakItem.break_by}</td>
+                      <td>
+                        {editingBreak && editingBreak.id === breakItem.id ? (
+                          <input
+                            type="date"
+                            className="form-control form-control-sm"
+                            value={editingBreak.start_date}
+                            onChange={(e) => setEditingBreak(prev => ({ ...prev, start_date: e.target.value }))}
+                          />
+                        ) : (
+                          formatDate(breakItem.start_date)
+                        )}
+                      </td>
+                      <td>
+                        {editingBreak && editingBreak.id === breakItem.id ? (
+                          <input
+                            type="date"
+                            className="form-control form-control-sm"
+                            value={editingBreak.end_date}
+                            onChange={(e) => setEditingBreak(prev => ({ ...prev, end_date: e.target.value }))}
+                          />
+                        ) : (
+                          formatDate(breakItem.end_date)
+                        )}
+                      </td>
+                      <td>
+                        {editingBreak && editingBreak.id === breakItem.id ? (
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-success"
+                              onClick={handleSaveBreak}
+                              title="Save changes"
+                            >
+                              <FontAwesomeIcon icon={faCheck} />
+                            </button>
+                            <button
+                              className="btn btn-secondary"
+                              onClick={handleCancelEdit}
+                              title="Cancel editing"
+                            >
+                              <FontAwesomeIcon icon={faTimes} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="btn-group btn-group-sm">
+                            <button
+                              className="btn btn-outline-primary"
+                              onClick={() => handleEditBreak(breakItem)}
+                              title="Edit break"
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                            <button
+                              className="btn btn-outline-danger"
+                              onClick={() => handleDeleteBreak(breakItem.id)}
+                              disabled={deletingBreaks.has(breakItem.id)}
+                              title="Delete break"
+                            >
+                              {deletingBreaks.has(breakItem.id) ? (
+                                <div className="spinner-border spinner-border-sm" role="status"></div>
+                              ) : (
+                                <FontAwesomeIcon icon={faTrash} />
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="col-3">
+            <div className="d-flex justify-content-end mb-3">
+              <Link
+                to="/breaks/create"
+                className="btn btn-outline-primary btn-sm"
+              >
+                <FontAwesomeIcon icon={faPlus} className="me-2" />
+                Create Break
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </div>
