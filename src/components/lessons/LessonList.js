@@ -7,7 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { getTime, getReadableDate } from "../../helper";
 import "../../styling/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faMoneyBill, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faMoneyBill, faChevronDown, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function LessonList(props) {
   const { id } = useParams();
@@ -186,27 +186,38 @@ function LessonList(props) {
       {removeMessage && <div className="alert alert-info" style={{ marginBottom: 10 }}>{removeMessage}</div>}
       {props.metadata && props.metadata.student && (
         <div className="student-sticky-header">
-          <h4 className="mb-1">{props.metadata.student.name}</h4>
-          <div className="text-muted">{props.metadata.student.instruments}</div>
-          {/* Schedule summary */}
-          {Array.isArray(props.metadata.student.schedule) && props.metadata.student.schedule.length > 0 && (
-            <div className="text-muted" style={{ fontSize: '0.85em', marginTop: '0.25rem' }}>
-              {props.metadata.student.schedule.slice(0, 2).map((item, idx) => {
-                // Format: Mondays at 12:30
-                const day = item.day || '';
-                let time = '';
-                if (item.start_time) {
-                  // Convert UTC to local time string (hh:mm)
-                  const [h, m] = item.start_time.split(":");
-                  const date = new Date();
-                  date.setUTCHours(Number(h), Number(m), 0, 0);
-                  time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-                }
-                return `${day}${time ? `s at ${time}` : ''}`;
-              }).join(', ')}
-              {props.metadata.student.schedule.length > 2 ? '…' : ''}
+          <div className="d-flex justify-content-between align-items-start">
+            <div>
+              <h4 className="mb-1">{props.metadata.student.name}</h4>
+              <div className="text-muted">{props.metadata.student.instruments}</div>
+              {/* Schedule summary */}
+              {Array.isArray(props.metadata.student.schedule) && props.metadata.student.schedule.length > 0 && (
+                <div className="text-muted" style={{ fontSize: '0.85em', marginTop: '0.25rem' }}>
+                  {props.metadata.student.schedule.slice(0, 2).map((item, idx) => {
+                    // Format: Mondays at 12:30
+                    const day = item.day || '';
+                    let time = '';
+                    if (item.start_time) {
+                      // Convert UTC to local time string (hh:mm)
+                      const [h, m] = item.start_time.split(":");
+                      const date = new Date();
+                      date.setUTCHours(Number(h), Number(m), 0, 0);
+                      time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    }
+                    return `${day}${time ? `s at ${time}` : ''}`;
+                  }).join(', ')}
+                  {props.metadata.student.schedule.length > 2 ? '…' : ''}
+                </div>
+              )}
             </div>
-          )}
+            <Link
+              to="/"
+              className="btn btn-outline-secondary btn-sm"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+              Back to Students
+            </Link>
+          </div>
         </div>
       )}
       <div className="lesson-card">

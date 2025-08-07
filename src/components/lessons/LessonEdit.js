@@ -5,10 +5,10 @@ import { updateLesson, getLesson, clearLessonUpdateSuccess } from "../../actions
 import { getStudent } from "../../actions/students";
 import { getTime } from "../../helper";
 import { trackPromise } from "react-promise-tracker";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import periAssistantApi from "../../api/periAssistantApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, student, errors }) {
   const navigate = useNavigate();
@@ -27,9 +27,9 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
         setLesson(response.data.lesson);
         setMetadata(response.data.metadata);
         
-        // If we have student info from the lesson, get the student details
-        if (response.data.lesson && response.data.lesson.student && response.data.lesson.student.id) {
-          getStudent(response.data.lesson.student.id);
+        // If we have student_id from the lesson, get the student details
+        if (response.data.lesson && response.data.lesson.student_id) {
+          getStudent(response.data.lesson.student_id);
         }
       } finally {
         setLoading(false);
@@ -43,8 +43,8 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
   useEffect(() => {
     if (lessonUpdated) {
       // Navigate back to the lessons page, or to the student's lessons if we have student info
-      if (lesson && lesson.student && lesson.student.id) {
-        navigate(`/student/${lesson.student.id}/lessons`);
+      if (lesson && lesson.student_id) {
+        navigate(`/student/${lesson.student_id}/lessons`);
       } else {
         navigate('/lessons');
       }
@@ -53,7 +53,7 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
 
   const onSubmit = useCallback(async (formValues) => {
     // Get student ID from lesson data if available, otherwise use the URL param
-    const studentIdToUse = lesson && lesson.student && lesson.student.id ? lesson.student.id : studentId;
+    const studentIdToUse = lesson && lesson.student_id ? lesson.student_id : studentId;
     await trackPromise(updateLesson(studentIdToUse, id, formValues));
     // Do not navigate here!
   }, [updateLesson, lesson, studentId, id]);
@@ -91,8 +91,19 @@ function LessonEdit({ updateLesson, getStudent, clearLessonUpdateSuccess, studen
     <div className="container" style={{ paddingTop: '2.5rem' }}>
       {metadata && metadata.student && (
         <div className="student-sticky-header">
-          <h4 className="mb-1">{metadata.student.name}</h4>
-          <div className="text-muted">{metadata.student.instruments}</div>
+          <div className="d-flex justify-content-between align-items-start">
+            <div>
+              <h4 className="mb-1">{metadata.student.name}</h4>
+              <div className="text-muted">{metadata.student.instruments}</div>
+            </div>
+            <Link
+              to={`/student/${lesson && lesson.student_id ? lesson.student_id : studentId}/lessons`}
+              className="btn btn-outline-secondary btn-sm"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+              Back to Lessons
+            </Link>
+          </div>
         </div>
       )}
       <div className="lesson-form-card" style={{ position: 'relative' }}>
