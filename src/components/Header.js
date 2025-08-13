@@ -12,6 +12,7 @@ import {
   faCalendarAlt,
   faMusic,
   faCoffee,
+  faChartBar,
 } from "@fortawesome/free-solid-svg-icons";
 import "../styling/styles.css";
 
@@ -107,6 +108,15 @@ function Header(props) {
             className={location.pathname === "/calendar" ? "active" : ""}
           >
             <FontAwesomeIcon icon={faCalendarAlt} className="icon-padded" style={{ marginRight: '8px' }} /> Calendar
+          </Link>
+        </li>
+        <li>
+          <Link 
+            to="/reports" 
+            onClick={closeSidebar}
+            className={location.pathname.startsWith("/reports") ? "active" : ""}
+          >
+            <FontAwesomeIcon icon={faChartBar} className="icon-padded" style={{ marginRight: '8px' }} /> Reports
           </Link>
         </li>
         <li>

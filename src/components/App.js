@@ -13,6 +13,8 @@ import LessonList from "./lessons/LessonList";
 import AllLessons from "./lessons/AllLessons";
 import LessonCreate from "./lessons/LessonCreate";
 import LessonEdit from "./lessons/LessonEdit";
+import ReportsList from "./reports/ReportsList";
+import ReportCreate from "./reports/ReportCreate";
 import Header from "./Header";
 import CalendarView from "./CalendarView";
 import { getToken } from "../auth/auth";
@@ -65,6 +67,8 @@ function App({ flash, clearFlash }) {
         <Route path="/student/:studentId/lesson/:id/edit" element={<LessonEdit />} />
         <Route path="/lesson/:id/edit" element={<LessonEdit />} />
         <Route path="/lessons" element={<AllLessons />} />
+        <Route path="/reports" element={<ReportsList />} />
+        <Route path="/reports/create" element={<ReportCreate />} />
         <Route path="/calendar" element={<CalendarView />} />
       </Routes>
     </div>

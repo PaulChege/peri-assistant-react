@@ -4,6 +4,7 @@ import studentReducer from "./studentReducer";
 import { USER_LOGOUT } from "../actions/types";
 import instrumentReducer from "./instrumentReducer";
 import lessonReducer from "./lessonReducer";
+import reportReducer from "./reportReducer";
 import errorReducer from "./errorReducer";
 import flashReducer from "./flashReducer"
 
@@ -13,7 +14,8 @@ const appReducer = combineReducers({
   user: userReducer,
   students: studentReducer,
   instruments: instrumentReducer,
-  lessons: lessonReducer
+  lessons: lessonReducer,
+  reports: reportReducer
 });
 
 const rootReducer = (state, action) => {
